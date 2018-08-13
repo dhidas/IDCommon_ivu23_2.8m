@@ -1,0 +1,1627 @@
+; ===============================
+; ===============================
+; Motion program routine
+; ===============================
+; ===============================
+; For operation mode/engineering mode
+; PROG10	GAP axis move program (4 axes at same time)
+;			Change JOG control relative position move from absolute position move (2013/10/15)
+; -------------------------------
+; For operation mode/engineering mode
+; For maintenance mode
+; PROG12	JACK axis move program
+; -------------------------------
+; -------------------------------
+; For maintenance mode
+; PROG14	GAP axis move program (separate, upper and lower axis move)
+;			Change JOG control relative position move from absolute position move (2013/10/15)
+; PROG15	GAP axis stop program (separate axis support: not defined)
+; PROG17	GAP axis move program (separate motor support: Add 2013/10/31)-> unused [defined in PLC]
+; -------------------------------
+; For changing mode
+; PROG18	I variable change program (operation mode/engineering mode) (unused: defined in PLC)
+; PROG19	I variable change program (maintenance mode) (unused: defined in PLC)
+; ===============================
+; For operation mode/engineering mode
+; PROG16	GAP axis move program (for adjusting position)
+; ===============================
+; -------------------------------
+; Common, no relationship with mode
+; For operation mode/engineering mode
+; PROG20	GAP axis evacuation program at interlock
+; PROG21	GAP axis home position move program (CLOSE direction high speed move [JOG move])
+; PROG22	GAP axis home position move program (OPEN direction low speed move [relative move])
+; PROG23	GAP axis home position move program (CLOSE direction low speed move [JOG move])
+; ===============================
+
+
+; =========================================
+; =========================================
+; GAP axis move motion program
+; (manual mode/engineering mode)
+; =========================================
+; =========================================
+OPEN PROG10 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+
+		; ------------------------------
+		; receive DRIVE-COMMAND from IOC
+		; ------------------------------
+		IF( GAP_1_MOV_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+;					X(2*GAP_1_MOV_REG) A(0) Y(2*GAP_1_MOV_REG) B(0)		; Axis drive(GAP)
+					X(1*GAP_1_MOV_REG) A(0) Y(1*GAP_1_MOV_REG) B(0)		; Axis drive(GAP)[do not twice because of GAP axis total move distance]
+
+P6400 = P6400 + 1		; for Debug
+
+					PRG_EXEC_REG    = PRG_EXEC_POS
+					DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+				ELSE
+				ENDIF
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_1_MOV_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_1_MOV_REG)
+		ENDIF			; if(! GAP_1_MOV_REG)
+
+		; -------------------------------
+		; receive JOG(+)-COMMAND from IOC
+		; -------------------------------
+		IF( GAP_1_JGP_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0113 != 0 )
+;						TMP10_REG = I0113 - 10
+						TMP13_REG = 0							; Clear relative move  distance
+						TMP11_REG = I0113 - 10000				; Set maximum value -10um
+						TMP12_REG = M162 / (I0108 * 32) + 80	; Set present value +80nm
+						TMP13_REG = TMP11_REG - TMP12_REG		; Relative move distance = maximum value - present value
+P338 = TMP13_REG
+						X(TMP13_REG) A(0) Y(TMP13_REG) B(0)		; Axis drive(GAP)
+P338 = -TMP13_REG
+					ELSE
+						X(SOFT_UPPER_LIMIT) A(0) Y(SOFT_UPPER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+
+				ELSE
+				ENDIF
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_1_JGP_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_1_JGP_REG)
+		ENDIF			; if(! GAP_1_JGP_REG)
+
+		; -------------------------------
+		; receive JOG(-)-COMMAND from IOC
+		; -------------------------------
+		IF( GAP_1_JGM_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0114 != 0 )
+;						TMP10_REG = I0114 + 10
+						TMP14_REG = 0							; Clear relative move distance
+						TMP11_REG = I0114 + 10000				; Set minimum value +10um
+						TMP12_REG = M162 / (I0108 * 32) - 80	; Set present value -80nm
+						TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+P339 = TMP14_REG
+						X(TMP14_REG) A(0) Y(TMP14_REG) B(0)		; Axis drive(GAP)
+P339 = -TMP14_REG
+					ELSE
+						X(SOFT_LOWER_LIMIT) A(0) Y(SOFT_LOWER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+
+				ELSE
+				ENDIF
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_1_JGM_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_1_JGM_REG)
+		ENDIF			; if(! GAP_1_JGM_REG)
+
+	ELSE			; if(SYS_NORMAL)
+
+		GAP_1_MOV_REG = 0
+		GAP_1_JGP_REG = 0
+		GAP_1_JGM_REG = 0
+
+	ENDIF			; if(SYS_NORMAL)
+
+
+CLOSE
+
+
+
+
+; =========================================
+; =========================================
+; JACK axis move motion program
+; (Manual mode/engineering mode)
+; (Maintenance mode)
+; =========================================
+; =========================================
+OPEN PROG12 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+
+		; ------------------------------
+		; receive DRIVE-COMMAND from IOC
+		; ------------------------------
+		IF( JCK_0_MOV_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					X(2*JCK_0_MOV_REG) A(0) Y(-2*JCK_0_MOV_REG) B(0)		; Axis drive(GAP) edited by kashima
+;					X(1*JCK_0_MOV_REG) A(0) Y(-1*JCK_0_MOV_REG) B(0)		; Axis drive(GAP)
+
+P6400 = P6400 + 1
+P6402 = JCK_0_MOV_REG
+
+					PRG_EXEC_REG    = PRG_EXEC_POS
+					DRIVE_MODE_REG  = JCK_DRIVE_MODE		; Drive mode is Jack-up mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+				ELSE
+				ENDIF
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			JCK_0_MOV_REG = 0				; Clear data received from IOC
+
+		ELSE			; if(! JCK_0_MOV_REG)
+		ENDIF			; if(! JCK_0_MOV_REG)
+
+		; -------------------------------
+		; receive JOG(+)-COMMAND from IOC
+		; -------------------------------
+		IF( JCK_0_JGP_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time(100msec)
+					TM1000					; Move time(1000msec)
+
+					IF( I0113 != 0 )
+;						TMP10_REG = I0113 - 10
+						TMP13_REG = 0							; Clear Relative move distance
+						TMP11_REG = I0113 - 10000				; Set maximum value -10um
+						TMP12_REG = M162 / (I0108 * 32) + 80	; Set present value +80nm
+						TMP13_REG = TMP11_REG - TMP12_REG		; Relative move distance = maximum value - present value
+P338 = TMP13_REG
+;						X(-1*TMP13_REG) A(0) Y(1*TMP13_REG) B(0)				; Axis drive(GAP)
+						X(1*TMP13_REG) A(0) Y(-1*TMP13_REG) B(0)				; Axis drive(GAP) edited by kashima.
+P338 = -TMP13_REG
+					ELSE
+;						X(-1*SOFT_UPPER_LIMIT) A(0) Y(1*SOFT_UPPER_LIMIT) B(0)	; Axis drive(GAP)
+						X(1*SOFT_UPPER_LIMIT) A(0) Y(-1*SOFT_UPPER_LIMIT) B(0)	; Axis drive(GAP) edited by kashima.
+					ENDIF
+
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = JCK_DRIVE_MODE		; Drive mode is Jack-up mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+				ELSE
+				ENDIF
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			JCK_0_JGP_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! JCK_0_JGP_REG)
+		ENDIF			; if(! JCK_0_JGP_REG)
+
+		; -------------------------------
+		; receive JOG(-)-COMMAND from IOC
+		; -------------------------------
+		IF( JCK_0_JGM_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time(100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0114 != 0 )
+;						TMP10_REG = I0114 + 10
+						TMP14_REG = 0							; Clear relative move distance
+						TMP11_REG = I0114 + 10000				; Set minimum value +10um
+						TMP12_REG = M162 / (I0108 * 32) - 80	; Set present value -80nm
+						TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+P339 = TMP14_REG
+;						X(-1*TMP14_REG) A(0) Y(1*TMP14_REG) B(0)				; Axis drive(GAP)
+						X(1*TMP14_REG) A(0) Y(-1*TMP14_REG) B(0)				; Axis drive(GAP) edited by kashima
+P339 = -TMP14_REG
+					ELSE
+;						X(-1*SOFT_LOWER_LIMIT) A(0) Y(1*SOFT_LOWER_LIMIT) B(0)	; Axis drive(GAP)
+						X(1*SOFT_LOWER_LIMIT) A(0) Y(-1*SOFT_LOWER_LIMIT) B(0)	; Axis drive(GAP) edited by kashima
+					ENDIF
+
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = JCK_DRIVE_MODE		; Drive mode is Jack-up mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+				ELSE
+				ENDIF
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			JCK_0_JGM_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! JCK_0_JGM_REG)
+		ENDIF			; if(! JCK_0_JGM_REG)
+
+	ELSE			; if(SYS_NORMAL)
+
+		JCK_0_MOV_REG = 0
+		JCK_0_JGP_REG = 0
+		JCK_0_JGM_REG = 0
+
+	ENDIF			; if(SYS_NORMAL)
+
+CLOSE
+
+
+; =============================
+; =============================
+; GAP axis move motion program
+; (Maintenance mode) [upper and lower individual move]
+; =============================
+; =============================
+OPEN PROG14 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+
+		; ------------------------------
+		; receive DRIVE-COMMAND from IOC
+		; ------------------------------
+		; ----------
+		; MOT[#1-#4]
+		; ----------
+		IF( GAP_1_MOV_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+;					IF( LOCK_1_STAT_REG = LOCK_OCCUR )
+
+						LINEAR					; Linear interpolation mode
+						INC(X,A,Y,B)			; Relative position move mode
+						TA500					; Acceleration and deceleration time (500msec)
+						TS100					; S-curve acceleration and deceleration time (100msec)
+						TM1000					; Move time (1000msec)
+
+						X(1*GAP_1_MOV_REG) A(0) Y(1*GAP_1_MOV_REG) B(0)		; Axis drive(GAP)
+
+						PRG_EXEC_REG    = PRG_EXEC_POS
+						DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Jack-up mode
+;						LOCK_1_STAT_REG = UNLOCK_OCCUR
+;					ELSE
+;					ENDIF
+
+				ELSE		; if(SERVO RDY)
+				ENDIF		; if(SERVO RDY)
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_1_MOV_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_MOV_REG)
+		ENDIF			; if(! GAP_MOV_REG)
+
+		IF( GAP_1_JGP_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative positon move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0113 != 0 )
+;						TMP10_REG = I0113 - 10
+						TMP13_REG = 0							; Clear relative move distance
+						TMP11_REG = I0113 - 10000				; Set maximum value -10um
+						TMP12_REG = M162 / (I0108 * 32) + 80	; Set present value +80nm
+						TMP13_REG = TMP11_REG - TMP12_REG		; Relative move distance = maximum value - present value
+						X(TMP13_REG) A(0) Y(TMP13_REG) B(0)		; Axis drive(GAP)
+					ELSE
+						X(SOFT_UPPER_LIMIT) A(0) Y(SOFT_UPPER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+
+				ELSE		; if(SERVO RDY)
+				ENDIF		; if(SERVO RDY)
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_1_JGP_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_1_JGP_REG)
+		ENDIF			; if(! GAP_1_JGP_REG)
+
+		IF( GAP_1_JGM_REG != 0 )
+
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative positon move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0114 != 0 )
+;						TMP10_REG = I0114 + 10
+						TMP14_REG = 0							; Set relative move distance
+						TMP11_REG = I0114 + 10000				; Set minimum value +10um
+						TMP12_REG = M162 / (I0108 * 32) - 80	; Set present value -80nm
+						TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+						X(TMP14_REG) A(0) Y(TMP14_REG) B(0)				; Axis drive(GAP)
+					ELSE
+						X(SOFT_LOWER_LIMIT) A(0) Y(SOFT_LOWER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+
+				ELSE		; if(SERVO RDY)
+				ENDIF		; if(SERVO RDY)
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_1_JGM_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_1_JGM_REG)
+		ENDIF			; if(! GAP_1_JGM_REG)
+
+
+		; ----------
+		; GAP[#2-#3]
+		; ----------
+		IF( GAP_2_MOV_REG != 0 )
+
+			; -------------------------
+			; Command to move if GAP-UPPER axis has stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+
+				LINEAR					; Linear interpolation mode
+				INC(X,A,Y,B)			; Relative positon move mode
+				TA500					; Acceleration and deceleration time (500msec)
+				TS100					; S-curve acceleration and deceleration time (100msec)
+				TM1000					; Move time 1000msec)
+
+				X(1*GAP_2_MOV_REG) A(0)			; Axis drive(GAP)
+
+				PRG_EXEC_REG    = PRG_EXEC_POS
+				DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;				LOCK_1_STAT_REG = UNLOCK_OCCUR
+;				LOCK_2_STAT_REG = UNLOCK_OCCUR
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_2_MOV_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_2_MOV_REG)
+		ENDIF			; if(! GAP_2_MOV_REG)
+
+		IF( GAP_2_JGP_REG != 0 )
+
+			; -------------------------
+			; Command to move if GAP-UPPER axis has stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+				; ============================
+				; Rev 2013/10/15(for BNL 2.8m)
+				I0124 = $810001
+				I0224 = $810001
+				I0324 = $810001
+				I0424 = $810001
+				I1724 = $810001
+				I1824 = $810001
+				I2024 = $810001
+				I2124 = $810001
+;				I0124 = $830001
+;				I0224 = $830001
+;				I0324 = $830001
+;				I0424 = $830001
+;				I1724 = $830001
+;				I1824 = $830001
+;				I2024 = $830001
+;				I2124 = $830001
+				; Rev 2013/10/15(for BNL 2.8m)
+				; ============================
+
+				LINEAR					; Linear interpolation mode
+				INC(X,A,Y,B)			; Relative position move mode
+				TA500					; Acceleration and deceleration time (500msec)
+				TS100					; S-curve acceleration and deceleration time (100msec)
+				TM1000					; Move time (1000msec)
+
+				IF( I0113 != 0 )
+;					TMP10_REG = I0113 - 10
+					TMP13_REG = 0							; Clear relative move distance
+					TMP11_REG = I0113 - 10000				; Set maximum value -10um
+					TMP12_REG = M162 / (I0108 * 32) + 80	; Set present value +80nm
+					TMP13_REG = TMP11_REG - TMP12_REG		; Relative move distance = maximum value - present value
+					X(TMP13_REG) A(0)				; Axis drive(GAP)
+				ELSE
+					X(SOFT_UPPER_LIMIT) A(0)		; Axis drive(GAP)
+				ENDIF
+
+				PRG_EXEC_REG    = PRG_EXEC_JOG
+				DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;				LOCK_1_STAT_REG = UNLOCK_OCCUR
+;				LOCK_2_STAT_REG = UNLOCK_OCCUR
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_2_JGP_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_2_JGP_REG)
+		ENDIF			; if(! GAP_2_JGP_REG)
+
+		IF( GAP_2_JGM_REG != 0 )
+
+			; -------------------------
+			; Command to move if GAP-UPPER axis has stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+				; ============================
+				; Rev 2013/10/15(for BNL 2.8m)
+				I0124 = $810001
+				I0224 = $810001
+				I0324 = $810001
+				I0424 = $810001
+				I1724 = $810001
+				I1824 = $810001
+				I2024 = $810001
+				I2124 = $810001
+;				I0124 = $830001
+;				I0224 = $830001
+;				I0324 = $830001
+;				I0424 = $830001
+;				I1724 = $830001
+;				I1824 = $830001
+;				I2024 = $830001
+;				I2124 = $830001
+				; Rev 2013/10/15(for BNL 2.8m)
+				; ============================
+
+				LINEAR					; Linear interpolation mode
+				INC(X,A,Y,B)			; Relative position move mode
+				TA500					; Acceleration and deceleration time (500msec)
+				TS100					; S-curve acceleration and deceleration time (100msec)
+				TM1000					; Move time (1000msec)
+
+				IF( I0114 != 0 )
+;					TMP10_REG = I0114 + 10
+					TMP14_REG = 0							; Clear relative move distance
+					TMP11_REG = I0114 + 10000				; Set minimum value +10um
+					TMP12_REG = M162 / (I0108 * 32) - 80	; Set present value -80nm
+					TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+					X(TMP14_REG) A(0)				; Axis drive(GAP)
+				ELSE
+					X(SOFT_LOWER_LIMIT) A(0)		; Axis drive(GAP)
+				ENDIF
+
+				PRG_EXEC_REG    = PRG_EXEC_JOG
+				DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;				LOCK_1_STAT_REG = UNLOCK_OCCUR
+;				LOCK_2_STAT_REG = UNLOCK_OCCUR
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_2_JGM_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_2_JGM_REG)
+		ENDIF			; if(! GAP_2_JGM_REG)
+
+
+		; ----------
+		; GAP[#4-#5]
+		; ----------
+		IF( GAP_3_MOV_REG != 0 )
+
+			; -------------------------
+			; Command to move if GAP-LOWER axis has stopped
+			; -------------------------
+			IF( MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+				LINEAR					; Linear interpolation mode
+				INC(X,A,Y,B)			; Relative position move mode
+				TA500					; Acceleration and deceleration time(500msec)
+				TS100					; S-curve acceleration and deceleration time (100msec)
+				TM1000					; Move time (1000msec)
+
+				Y(1*GAP_3_MOV_REG) B(0)			; Axis drive(GAP)
+
+				PRG_EXEC_REG    = PRG_EXEC_POS
+				DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;				LOCK_3_STAT_REG = UNLOCK_OCCUR
+;				LOCK_4_STAT_REG = UNLOCK_OCCUR
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_3_MOV_REG = 0;					; Clear data received from IOC
+
+		ELSE			; if(! GAP_3_MOV_REG)
+		ENDIF			; if(! GAP_3_MOV_REG)
+
+		IF( GAP_3_JGP_REG != 0 )
+
+			; -------------------------
+			; Command to move if GAP-LOWER axis has stopped
+			; -------------------------
+			IF( MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+				; ============================
+				; Rev 2013/10/15(for BNL 2.8m)
+				I0124 = $810001
+				I0224 = $810001
+				I0324 = $810001
+				I0424 = $810001
+				I1724 = $810001
+				I1824 = $810001
+				I2024 = $810001
+				I2124 = $810001
+;				I0124 = $830001
+;				I0224 = $830001
+;				I0324 = $830001
+;				I0424 = $830001
+;				I1724 = $830001
+;				I1824 = $830001
+;				I2024 = $830001
+;				I2124 = $830001
+				; Rev 2013/10/15(for BNL 2.8m)
+				; ============================
+
+				LINEAR					; Linear interpolation mode
+				INC(X,A,Y,B)			; Relative position move mode
+				TA500					; Acceleration and deceleration time (500msec)
+				TS100					; S-curve acceleration and deceleration (100msec)
+				TM1000					; Move time (1000msec)
+
+				IF( I0113 != 0 )
+;					TMP10_REG = I0113 - 10
+					TMP13_REG = 0							; Clear relative move distance
+					TMP11_REG = I0113 - 10000				; Set maximum value -10um
+					TMP12_REG = M362 / (I0308 * 32) + 80	; Set present value +80nm
+					TMP13_REG = TMP11_REG - TMP12_REG		; Relative move distance = maximum value - present value
+					Y(TMP13_REG) B(0)						; Axis drive(GAP)
+				ELSE
+					Y(SOFT_UPPER_LIMIT) B(0)		; Axis drive(GAP)
+				ENDIF
+
+				PRG_EXEC_REG    = PRG_EXEC_JOG
+				DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;				LOCK_3_STAT_REG = UNLOCK_OCCUR
+;				LOCK_4_STAT_REG = UNLOCK_OCCUR
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_3_JGP_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_3_JGP_REG)
+		ENDIF			; if(! GAP_3_JGP_REG)
+
+		IF( GAP_3_JGM_REG != 0 )
+
+			; -------------------------
+			; Command to move if GAP-LOWER axis has stopped
+			; -------------------------
+			IF( MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+				; ============================
+				; Rev 2013/10/15(for BNL 2.8m)
+				I0124 = $810001
+				I0224 = $810001
+				I0324 = $810001
+				I0424 = $810001
+				I1724 = $810001
+				I1824 = $810001
+				I2024 = $810001
+				I2124 = $810001
+;				I0124 = $830001
+;				I0224 = $830001
+;				I0324 = $830001
+;				I0424 = $830001
+;				I1724 = $830001
+;				I1824 = $830001
+;				I2024 = $830001
+;				I2124 = $830001
+				; Rev 2013/10/15(for BNL 2.8m)
+				; ============================
+
+				LINEAR					; Linear interpolation mode
+				INC(X,A,Y,B)			; Relative positon move mode
+				TA500					; Acceleration and deceleration time (500msec)
+				TS100					; S-curve acceleraiton and deceleration time (100msec)
+				TM1000					; Move time (1000msec)
+
+				IF( I0114 != 0 )
+;					TMP10_REG = I0114 + 10
+					TMP14_REG = 0							; Clear relative move distance
+					TMP11_REG = I0114 + 10000				; Set minimum value +10um
+					TMP12_REG = M362 / (I0308 * 32) - 80	; Set present value -80nm
+					TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+					Y(TMP14_REG) B(0)						; Axis drive(GAP)
+				ELSE
+					Y(SOFT_LOWER_LIMIT) B(0)		; Axis drive(GAP)
+				ENDIF
+
+				PRG_EXEC_REG    = PRG_EXEC_JOG
+				DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+;				LOCK_3_STAT_REG = UNLOCK_OCCUR
+;				LOCK_4_STAT_REG = UNLOCK_OCCUR
+
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			GAP_3_JGM_REG = 0;				; Clear data received from IOC
+
+		ELSE			; if(! GAP_3_JGM_REG)
+		ENDIF			; if(! GAP_3_JGM_REG)
+
+	ELSE				; if(SYS_NORMAL)
+
+		GAP_1_MOV_REG = 0
+		GAP_1_JGP_REG = 0
+		GAP_1_JGM_REG = 0
+
+		GAP_2_MOV_REG = 0
+		GAP_2_JGP_REG = 0
+		GAP_2_JGM_REG = 0
+
+		GAP_3_MOV_REG = 0
+		GAP_3_JGP_REG = 0
+		GAP_3_JGM_REG = 0
+
+	ENDIF				; if(SYS_NORMAL)
+
+
+CLOSE
+
+
+; =============================
+; =============================
+; GAP axis stop motion program
+; (Maintenance mode)
+; =============================
+; =============================
+;OPEN PROG15 CLEAR
+;
+;
+;	; -----------------------------
+;	; receive STOP-COMMAND from IOC
+;	; -----------------------------
+;	; -------
+;	; GAP[#2]
+;	; -------
+;	IF( IOC_GAP_STP_REG != 0 )
+;
+;		; --------------------------
+;		; Stop at any system state
+;		; --------------------------
+;		IF( LOCK_STAT_REG != LOCK_OCCUR )
+;			CMD"#2J/"						; Axis stop(GAP)
+;
+;			LOCK_STAT_REG = LOCK_OCCUR
+;		ELSE
+;		ENDIF
+;
+;		IOC_GAP_STP_REG = 0;			; Clear data received from IOC
+;
+;	ELSE			; if(! IOC_GAP_STP_REG)
+;	ENDIF			; if(! IOC_GAP_STP_REG)
+;
+;	; -------
+;	; GAP[#3]
+;	; -------
+;	IF( IOC_GAP_3_STP_REG != 0 )
+;
+;		; --------------------------
+;		; Stop at any system state
+;		; --------------------------
+;		IF( LOCK_3_STAT_REG != LOCK_OCCUR )
+;			CMD"#3J/"						; Axis stop(GAP)
+;
+;			LOCK_3_STAT_REG = LOCK_OCCUR
+;		ELSE
+;		ENDIF
+;
+;		IOC_GAP_3_STP_REG = 0;			; Clear data received from IOC
+;
+;	ELSE			; if(! IOC_GAP_3_STP_REG)
+;	ENDIF			; if(! IOC_GAP_3_STP_REG)
+;
+;	; -------
+;	; GAP[#4]
+;	; -------
+;	IF( IOC_GAP_4_STP_REG != 0 )
+;
+;		; --------------------------
+;		; Stop at any system state
+;		; --------------------------
+;		IF( LOCK_4_STAT_REG != LOCK_OCCUR )
+;			CMD"#4J/"						; Axis stop(GAP)
+;
+;			LOCK_4_STAT_REG = LOCK_OCCUR
+;		ELSE
+;		ENDIF
+;
+;		IOC_GAP_4_STP_REG = 0;			; Clear data received from IOC
+;
+;	ELSE			; if(! IOC_GAP_4_STP_REG)
+;	ENDIF			; if(! IOC_GAP_4_STP_REG)
+;
+;	; -------
+;	; GAP[#5]
+;	; -------
+;	IF( IOC_GAP_5_STP_REG != 0 )
+;
+;		; --------------------------
+;		; Stop at any system state
+;		; --------------------------
+;		IF( LOCK_5_STAT_REG != LOCK_OCCUR )
+;			CMD"#5J/"						; Axis stop(GAP)
+;
+;			LOCK_5_STAT_REG = LOCK_OCCUR
+;		ELSE
+;		ENDIF
+;
+;		IOC_GAP_5_STP_REG = 0;			; Clear data received from IOC
+;
+;	ELSE			; if(! IOC_GAP_5_STP_REG)
+;	ENDIF			; if(! IOC_GAP_5_STP_REG)
+;
+;
+;CLOSE
+
+
+
+; =========================================
+; =========================================
+; I variables change motion program
+; (Manual mode/engineering mode)
+; =========================================
+; =========================================
+OPEN PROG18 CLEAR
+
+	; ----------------------
+	; Change setting if all axes have stopped
+	; ----------------------
+	IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+
+		; --------------------------------------
+		;	X axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#17 I variables setting
+		; --------------------------------------
+		I1700 = MOTOR_ACTIVE				; Motor Activation
+		I1702 = DAC_OUTPUT_CH01_REG			; Command Output Address
+		I1706 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#1 I variables setting
+		; --------------------------------------
+		I0102 = DAC_OFFSET_CH18_REG			; Command Output Address
+		I0103 = BISS_ADD_1_2				; Position Loop Feedback Address
+		I0104 = BISS_ADD_1_2				; Velocity Loop Feedback Address
+		I0106 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		I0108 = I1708						; Position Scale Factor
+		I0109 = I1708						; Velocity-Loop Scale Factor
+
+		I0124 = MOTOR_FLAG_VAL				; Flag Mode Control
+
+		I0130 = (PROPO_GAIN_UP)				; PID Proportional Gain
+;		I0131 = DERIV_GAIN_UP				; PID Derivative Gain
+;		I0132 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+;		I0133 = INTEG_GAIN_UP				; PID Integral Gain
+;		I0135 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+		; --------------------------------------
+		;	A axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#18 I variables setting
+		; --------------------------------------
+		I1800 = MOTOR_ACTIVE				; Motor Activation
+		I1802 = DAC_OUTPUT_CH02_REG			; Command Output Address
+		I1806 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#2 I variables setting
+		; --------------------------------------
+		I0202 = DAC_OFFSET_CH17_REG			; Command Output Address
+		I0203 = BISS_SUB_1_2				; Position Loop Feedback Address
+		I0204 = BISS_SUB_1_2				; Velocity Loop Feedback Address
+		I0206 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		I0208 = I1708						; Position Scale Factor
+		I0209 = I1708						; Velocity Loop Feedback Address
+
+		I0224 = MOTOR_FLAG_VAL				; Flag Mode Control
+
+		I0230 = (2*PROPO_GAIN_UP)			; PID Proportional Gain
+;		I0231 = DERIV_GAIN_UP				; PID Derivative Gain
+;		I0232 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+;		I0233 = INTEG_GAIN_UP				; PID Integral Gain
+;		I0235 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+		; --------------------------------------
+		;	Y axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#20 I variables setting
+		; --------------------------------------
+		I2000 = MOTOR_ACTIVE				; Motor Activation
+		I2002 = DAC_OUTPUT_CH03_REG			; Command Output Address
+		I2006 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#3 I variables setting
+		; --------------------------------------
+		I0302 = DAC_OFFSET_CH21_REG			; Command Output Address
+		I0303 = BISS_ADD_3_4				; Position Loop Feedback Address
+		I0304 = BISS_ADD_3_4				; Velocity Loop Feedback Address
+		I0306 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		I0308 = I2008						; Position Scale Factor
+		I0309 = I2008						; Velocity Loop Feedback Address
+
+		I0324 = MOTOR_FLAG_VAL				; Flag Mode Control
+
+		I0330 = (PROPO_GAIN_DN)				; PID Proportional Gain
+;		I0331 = DERIV_GAIN_DN				; PID Derivative Gain
+;		I0332 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+;		I0333 = INTEG_GAIN_DN				; PID Integral Gain
+;		I0335 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+
+		; --------------------------------------
+		;	B axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#21 I variables setting
+		; --------------------------------------
+		I2100 = MOTOR_ACTIVE				; Motor Activation
+		I2102 = DAC_OUTPUT_CH04_REG			; Command Output Address
+		I2106 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#4 I variables setting
+		; --------------------------------------
+		I0402 = DAC_OFFSET_CH20_REG			; Command Output Address
+		I0403 = BISS_SUB_3_4				; Position Loop Feedback Address
+		I0404 = BISS_SUB_3_4				; Velocity Loop Feedback Address
+		I0406 = MOTOR_FOLW					; Position Following Enable and Mode
+
+		I0408 = I2008						; Position Scale Factor
+		I0409 = I2008						; Velocity Loop Feedback Address
+
+		I0424 = MOTOR_FLAG_VAL				; Flag Mode Control
+
+		I0430 = (2*PROPO_GAIN_DN)			; PID Proportional Gain
+;		I0431 = DERIV_GAIN_DN				; PID Derivative Gain
+;		I0432 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+;		I0433 = INTEG_GAIN_DN				; PID Integral Gain
+;		I0435 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+	ELSE		; if(STOP AXIS)
+	ENDIF		; if(STOP AXIS)
+
+
+CLOSE
+
+
+; =============================
+; =============================
+; I variables change motion program
+; (Maintenance mode)
+; =============================
+; =============================
+OPEN PROG19 CLEAR
+
+	; ----------------------
+	; Change setting if all axes have stopped
+	; ----------------------
+	IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+
+		; --------------------------------------
+		;	X axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#17 I variables setting
+		; --------------------------------------
+		I1700 = MOTOR_INACTV				; Motor Inactivation
+		I1702 = DAC_OFFSET_CH18_REG			; Command Output Address
+		I1706 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#1 I variables setting
+		; --------------------------------------
+		I0102 = DAC_OUTPUT_CH01_REG			; Command Output Address
+		I0103 = ROT_ENC_1					; Position Loop Feedback Address
+		I0104 = ROT_ENC_1					; Velocity Loop Feedback Address
+		I0106 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		I0108 = MNT_POS_CNV_RATE			; Position Scale Factor
+		I0109 = MNT_SPD_CNV_RATE			; Velocity Loop Feedback Address
+
+		I0124 = MNT_FLAG_VAL				; Flag Mode Control
+
+		I0130 = (PROPO_GAIN_UP)				; PID Proportional Gain
+;		I0131 = DERIV_GAIN_UP				; PID Derivative Gain
+;		I0132 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+;		I0133 = INTEG_GAIN_UP				; PID Integral Gain
+;		I0135 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+
+		; --------------------------------------
+		;	A axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#18 I variables setting
+		; --------------------------------------
+		I1800 = MOTOR_INACTV				; Motor Inactivation
+		I1802 = DAC_OFFSET_CH17_REG			; Command Output Address
+		I1806 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#2 I variables setting
+		; --------------------------------------
+		I0202 = DAC_OUTPUT_CH02_REG			; Command Output Address
+		I0203 = ROT_ENC_2					; Position Loop Feedback Address
+		I0204 = ROT_ENC_2					; Velocity Loop Feedback Address
+		I0206 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		I0208 = MNT_POS_CNV_RATE			; Position Scale Factor
+		I0209 = MNT_SPD_CNV_RATE			; Velocity Loop Feedback Address
+
+		I0224 = MNT_FLAG_VAL				; Flag Mode Control
+
+		I0230 = (PROPO_GAIN_UP)				; PID Proportional Gain
+;		I0231 = DERIV_GAIN_UP				; PID Derivative Gain
+;		I0232 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+;		I0233 = INTEG_GAIN_UP				; PID Integral Gain
+;		I0235 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+
+		; --------------------------------------
+		;	Y axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#20 I variables setting
+		; --------------------------------------
+		I2000 = MOTOR_INACTV				; Motor Inactivation
+		I2002 = DAC_OFFSET_CH21_REG			; Command Output Address
+		I2006 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#3 I variables setting
+		; --------------------------------------
+		I0302 = DAC_OUTPUT_CH03_REG			; Command Output Address
+		I0303 = ROT_ENC_3					; Position Loop Feedback Address
+		I0304 = ROT_ENC_3					; Velocity Loop Feedback Address
+		I0306 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		I0308 = MNT_POS_CNV_RATE			; Position Scale Factor
+		I0309 = MNT_SPD_CNV_RATE			; Velocity Loop Feedback Address
+
+		I0324 = MNT_FLAG_VAL				; Flag Mode Control
+
+		I0330 = (PROPO_GAIN_DN)				; PID Proportional Gain
+;		I0331 = DERIV_GAIN_DN				; PID Derivative Gain
+;		I0332 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+;		I0333 = INTEG_GAIN_DN				; PID Integral Gain
+;		I0335 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+		; --------------------------------------
+		;	B axis definition
+		; --------------------------------------
+		; --------------------------------------
+		;	#21 I variables setting
+		; --------------------------------------
+		I2100 = MOTOR_INACTV				; Motor Inactivation
+		I2102 = DAC_OFFSET_CH20_REG			; Command Output Address
+		I2106 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		; --------------------------------------
+		;	#4 I variables setting
+		; --------------------------------------
+		I0402 = DAC_OUTPUT_CH04_REG			; Command Output Address
+		I0403 = ROT_ENC_4					; Position Loop Feedback Address
+		I0404 = ROT_ENC_4					; Velocity Loop Feedback Address
+		I0406 = MNT_MOTOR_FOLW				; Position Following Enable and Mode
+
+		I0408 = MNT_POS_CNV_RATE			; Position Scale Factor
+		I0409 = MNT_SPD_CNV_RATE			; Velocity Loop Feedback Address
+
+		I0424 = MNT_FLAG_VAL				; Flag Mode Control
+
+		I0430 = (PROPO_GAIN_DN)				; PID Proportional Gain
+;		I0431 = DERIV_GAIN_DN				; PID Derivative Gain
+;		I0432 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+;		I0433 = INTEG_GAIN_DN				; PID Integral Gain
+;		I0435 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+	ELSE		; if(STOP AXIS)
+	ENDIF		; if(STOP AXIS)
+
+
+CLOSE
+
+
+; =========================================
+; =========================================
+; GAP axis move motion program
+; (Manual mode/engineering mode)
+; =========================================
+; =========================================
+OPEN PROG16 CLEAR
+
+	IF( INITIALIZE_REG = SYS_NORMAL AND REF_POS_REG != 0 )
+
+		; -------------------------
+		; Command to move if all GAP axes have stopped
+		; -------------------------
+		IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+			IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON )
+;				IF( LOCK_1_STAT_REG = LOCK_OCCUR )
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS200					; S-curve acceleration and deceleration (200msec)
+
+					X(1*REF_POS_REG) A(0) Y(1*REF_POS_REG) B(0)	; Axis drive(GAP)
+
+;					PRG_EXEC_REG    = PRG_EXEC_POS
+;					DRIVE_MODE_REG  = GAP_DRIVE_MODE		; Drive mode is Gap-drive mode
+
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+;				ELSE
+;				ENDIF
+			ELSE
+			ENDIF
+
+		ELSE			; if(AXIS STOP)
+		ENDIF			; if(AXIS STOP)
+
+		REF_POS_REG = 0;				; Clear data received from IOC
+
+	ELSE			; if(! REF_POS_REG)
+	ENDIF			; if(! REF_POS_REG)
+
+
+CLOSE
+
+
+; =========================================
+; =========================================
+; GAP axis evacuation motion program
+; (Manual mode/engineering mode)
+; =========================================
+; =========================================
+OPEN PROG20 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+
+		IF( P330 = 1 )
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR						; Linear interpolation mode
+					INC(X,A,Y,B)				; Relative position move mode
+					TA500						; Acceleration and deceleration time (500msec)
+					TS100						; S-curve acceleration and deceleration time (100msec)
+					TM1000						; Move time (1000msec)
+
+					IF( I0113 != 0 )
+;						TMP10_REG = I0113 - 10
+						TMP15_REG = 0										; Add 2013/10/15 Clear relative move distance
+						TMP11_REG = I0113 - 10000							; Add 2013/10/15 Set maximum value -10um
+						TMP12_REG = M162 / (I0108 * 32) + 80				; Add 2013/10/15 Set present value +80nm
+
+						TMP15_REG = TMP11_REG - TMP12_REG					; Add 2013/10/15 Relative move distance = maximum value - present value
+P340 = TMP15_REG
+; P6200 = TMP11_REG		; for Debug
+; P6201 = TMP12_REG		; for Debug
+; P6202 = I0213			; for Debug
+; P6203 = GAP_INTLK_POS	; for Debug
+
+						X(TMP15_REG) A(0) Y(TMP15_REG) B(0)		; Axis drive(GAP)
+
+P340 = -TMP15_REG
+					ELSE
+						X(SOFT_UPPER_LIMIT) A(0) Y(SOFT_UPPER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+
+					PRG_GAP__INTLK   = 1
+
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+
+				ELSE		; if(SERVO__ON)
+				ENDIF		; if(SERVO__ON)
+			ELSE			; if(AXIS STOP)
+			ENDIF			; if(AXIS STOP)
+
+			P330 = 0
+		ELSE			; if(P330)
+		ENDIF			; if(P330)
+
+	ELSE			; if(SYS_NORMAL)
+	ENDIF			; if(SYS_NORMAL)
+
+
+CLOSE
+
+
+; =============================
+; =============================
+; GAP axis home position move program
+; (CLOSE direction high speed move [JOG move])
+; =============================
+; =============================
+OPEN PROG21 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+
+		IF( HOME_DRV_PRG_REG = HOME_EXEC_1 )
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0114 != 0 )
+;						TMP10_REG = I0114 + 10
+						TMP14_REG = 0							; Clear relative move distance
+						TMP11_REG = I0114 + 10000				; Set minimum value +10um
+						TMP12_REG = M162 / (I0108 * 32) - 80	; Set present value -80nm
+						TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+P339 = TMP14_REG
+						X(TMP14_REG) A(0) Y(TMP14_REG) B(0)		; Axis drive(GAP)
+P339 = -TMP14_REG
+					ELSE
+						X(SOFT_LOWER_LIMIT) A(0) Y(SOFT_LOWER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+
+P6720 = P6720 + 1				; for Debug
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = HME_DRIVE_MODE		; Drive mode is Gap-drive mode
+
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+;					LOCK_2_STAT_REG = UNLOCK_OCCUR
+;					LOCK_3_STAT_REG = UNLOCK_OCCUR
+;					LOCK_4_STAT_REG = UNLOCK_OCCUR
+
+				ELSE		; if(SERVO_RDY__ON)
+				ENDIF		; if(SERVO_RDY__ON)
+			ELSE		; if(AXIS STOP)
+			ENDIF		; if(AXIS STOP)
+
+			HOME_DRV_PRG_REG = HOME_EXEC_0				; Clear motion program execution
+
+		ELSE		; if(HOME_EXEC_1)
+		ENDIF		; if(HOME_EXEC_1)
+	ELSE		; if(SYS_NORMAL)
+	ENDIF		; if(SYS_NORMAL)
+
+
+CLOSE
+
+; =============================
+; =============================
+; GAP axis home position move program
+; (OPEN direction setpoint low speed move [relative move])
+; (Move distance is 1mm[1000um])
+; =============================
+; =============================
+OPEN PROG22 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+
+		IF( HOME_DRV_PRG_REG = HOME_EXEC_2 )
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					HOME_DRV_DIS_REG = 1 * HOME_FIX_DRV * MOT_LIN_ROT_CNV	; Calculate move distance
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration time (100msec)
+					TM1000					; Move time (1000msec)
+
+					X(1*HOME_DRV_DIS_REG) A(0) Y(1*HOME_DRV_DIS_REG) B(0)		; Axis drive(GAP)
+
+P6721 = P6721 + 1				; for Debug
+
+					PRG_EXEC_REG    = PRG_EXEC_POS
+					DRIVE_MODE_REG  = HME_DRIVE_MODE		; Drive mode is Jack-up mode
+
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+;					LOCK_2_STAT_REG = UNLOCK_OCCUR
+;					LOCK_3_STAT_REG = UNLOCK_OCCUR
+;					LOCK_4_STAT_REG = UNLOCK_OCCUR
+
+				ELSE		; if(SERVO RDY)
+				ENDIF		; if(SERVO RDY)
+			ELSE		; if(AXIS STOP)
+			ENDIF		; if(AXIS STOP)
+
+			HOME_DRV_PRG_REG = HOME_EXEC_0				; Clear flag of motion program execution
+
+		ELSE		; if(HOME_EXEC_2)
+		ENDIF		; if(HOME_EXEC_2)
+	ELSE		; if(SYS_NORMAL)
+	ENDIF		; if(SYS_NORMAL)
+
+
+CLOSE
+
+
+
+; =============================
+; =============================
+; GAP axis home position move program
+; (CLOSE direction low speed move [JOG move]
+; =============================
+; =============================
+OPEN PROG23 CLEAR
+
+	; --------------
+	; System is normal
+	; --------------
+	IF( INITIALIZE_REG = SYS_NORMAL AND DEVIATION_STAT_REG = DVI_NORMAL AND BISS_STAT_REG = BISS_NORMAL )
+		IF( HOME_DRV_PRG_REG = HOME_EXEC_3 )
+			; -------------------------
+			; Command to move if all GAP axes have stopped
+			; -------------------------
+			IF( MOV_1_STAT_REG = STOP_AXIS AND MOV_2_STAT_REG = STOP_AXIS AND MOV_3_STAT_REG = STOP_AXIS AND MOV_4_STAT_REG = STOP_AXIS )
+				IF( SRDY_1_OUT = SERVO_RDY__ON AND SRDY_2_OUT = SERVO_RDY__ON AND SRDY_3_OUT = SERVO_RDY__ON AND SRDY_4_OUT = SERVO_RDY__ON AND GAP__BRAKE_STAT = SERVO_RDY_OFF )
+					; ============================
+					; Rev 2013/10/15(for BNL 2.8m)
+					I0124 = $810001
+					I0224 = $810001
+					I0324 = $810001
+					I0424 = $810001
+					I1724 = $810001
+					I1824 = $810001
+					I2024 = $810001
+					I2124 = $810001
+;					I0124 = $830001
+;					I0224 = $830001
+;					I0324 = $830001
+;					I0424 = $830001
+;					I1724 = $830001
+;					I1824 = $830001
+;					I2024 = $830001
+;					I2124 = $830001
+					; Rev 2013/10/15(for BNL 2.8m)
+					; ============================
+
+					LINEAR					; Linear interpolation mode
+					INC(X,A,Y,B)			; Relative position move mode
+					TA500					; Acceleration and deceleration time (500msec)
+					TS100					; S-curve acceleration and deceleration (100msec)
+					TM1000					; Move time (1000msec)
+
+					IF( I0114 != 0 )
+;						TMP10_REG = I0114 + 10
+						TMP14_REG = 0							; Clear relative move distance
+						TMP11_REG = I0114 + 10000				; Set minimum value +10um
+						TMP12_REG = M162 / (I0108 * 32) - 80	; Set present value -80nm
+						TMP14_REG = TMP11_REG - TMP12_REG		; Relative move distance = minimum value - present value
+P339 = TMP14_REG
+						X(TMP14_REG) A(0) Y(TMP14_REG) B(0)		; Axis drive(GAP)
+P339 = -TMP14_REG
+					ELSE
+						X(SOFT_LOWER_LIMIT) A(0) Y(SOFT_LOWER_LIMIT) B(0)	; Axis drive(GAP)
+					ENDIF
+P6750 = I0116					; for Debug
+P6751 = I0122					; for Debug
+P6722 = P6722 + 1				; for Debug
+					PRG_EXEC_REG    = PRG_EXEC_JOG
+					DRIVE_MODE_REG  = HME_DRIVE_MODE		; Drive mode is Gap-drive mode
+
+;					LOCK_1_STAT_REG = UNLOCK_OCCUR
+;					LOCK_2_STAT_REG = UNLOCK_OCCUR
+;					LOCK_3_STAT_REG = UNLOCK_OCCUR
+;					LOCK_4_STAT_REG = UNLOCK_OCCUR
+
+				ELSE		; if(SERVO_RDY__ON)
+				ENDIF		; if(SERVO_RDY__ON)
+			ELSE		; if(AXIS STOP)
+			ENDIF		; if(AXIS STOP)
+
+			HOME_DRV_PRG_REG = HOME_EXEC_0				; Clear flag of motion program execution
+		ELSE		; if(HOME_EXEC_3)
+		ENDIF		; if(HOME_EXEC_3)
+	ELSE		; if(SYS_NORMAL)
+	ENDIF		; if(SYS_NORMAL)
+
+
+CLOSE
+
+

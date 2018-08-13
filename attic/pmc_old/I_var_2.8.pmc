@@ -1,0 +1,1182 @@
+; ====================================================================
+;	BNL 2.8m IVU
+; ====================================================================
+;
+;	Default IP address (192.6.94.5)
+; #1,#2->UPPER(Real Axis)
+; #3,#4->LOWER(Real Axis)
+; #17,#18->UPPER(Virtual Axis)
+; #20,#21->LOWER(Virtual Axis)
+; #19->UPPER(Spare)
+; #22->LOWER(Spare)
+
+
+; --------------------------------------
+; Motor variables (I variables) setting definition
+; --------------------------------------
+; --------------------------------------
+; Constant value setting
+; --------------------------------------
+#define		SPD_SLOW			16		; GAP axis velocity [cts/msec] (low: need review)
+#define		SPD_MIDL			64		; GAP axis velocity [cts/msec] (middle: need review)
+#define		SPD_HIGH			128		; GAP axis velocity [cts/msec] (high: need review)
+; #define		SPA_SPD			0.2		; GAP axis velocity [cts/msec] (separete mode velocity [constant value])
+; #define		SPA_SPD				0.1		; GAP axis velocity [cts/msec] (separete mode [constant value])
+#define		SPA_SPD				0.4		; GAP axis velocity [cts/msec] (separete mode velocity [constant value])20150404
+; #define		SPD_MIN			0.4		; GAP axis velocity [cts/msec] (minimum velocity)
+#define		SPD_MIN				0.2		; GAP axis velocity [cts/msec] (minimum velocity)
+; #define		SPD_MAX			550		; GAP axis velocity [cts/msec] (maximum velocity) [1.5m]
+#define		SPD_MAX				1100	; GAP axis velocity [cts/msec] (maximun velocity) [2.8m]
+#define		ACC_VAL				2.5		; GAP axis acceleration [cts/msec2]
+#define		RED_VAL				2.25	; GAP axis deceleration [cts/msec2]
+; #define		RED_VAL			1.25	; GAP axis deceleration [cts/msec2]
+; #define		ADJ_SPD			0.25	; GAP axis velocity [cts/msec](velocity of compensation move and separete move [constant value]/Add:2014/09/13)
+; #define		ADJ_SPD			0.3		; GAP axis velocity [cts/msec](velocity of compensation move and serarete move [constant value]/Add:2014/09/13)
+; #define		ADJ_SPD			0.36	; GAP axis velocity [cts/msec](velocity of compensation move and serarete move [constant value]/Add:2014/09/14)
+; #define		ADJ_SPD				0.5		; GAP axis velocity [cts/msec](velocity of compensation move and serarete move [constant value]/Add:2014/09/15)
+#define		ADJ_SPD				2.0		; GAP axix velocity [cts/msec](velocity of compensation move and serarete move [constant value]/Add:2015/04/04)
+
+
+; --------------------------------------
+; Common
+; --------------------------------------
+#define		IO_HANDLING_VAL			1			; I3:I/O Handshake Control
+#define		IO_CHECKSUM_VAL			0			; I4:Communications Integrity Mode
+#define		PLC_RUN_VAL				2			; I5:PLC Program Control
+#define		ERR_NOTICE_VAL			1			; I6:Error Reporting Mode
+#define		LIST_VAL				0			; I9:Full/Abbreviated Listing Control
+#define		EMR_WD_VAL				0			; I35:Brick LV & Controller E-Stop Enable, ENABLE(=1)/DISABLE(=0)
+
+#define		MOTOR_ACTIVE			1			; Ixx00:Motor xx Activation Control, enable(=1)/disable(=0)
+#define		MOTOR_INACTV			0			; Ixx00:Motor xx Activation Control, enable(=1)/disable(=0)
+#define		COMMU_ACTIVE			0			; Ixx01:Motor xx Commutation Enable, enable(=1,3)/disable(=0[default],2)
+#define		POWER_ON_INIT			1			; Ixx10:Motor xx Power-On Servo Position Address =enable
+#define		ACCEL_TIME				100			; Ixx20:Motor xx Jog/Home Acceleration Time
+#define		S_ACCEL_TIME			100			; Ixx21:Motor xx Jog/Home S-Curve Time
+#define		ERROR_DIV_VAL			1024000		; Ixx11:Motor xx Fatal Following Error Limit (units:1/16count)
+#define		WARNING_DIV_VAL			512000		; Ixx12:Motor xx Warning Following Error Limit (units:1/16count)
+#define		BACK_RUSH_VAL			160000		; Ixx86:Motor xx Backlash Size
+#define		JACK_BACK_RUSH_VAL		160000		; Ixx86:Motor xx Backlash Size
+
+
+; --------------------------------------
+;	Ixx24 setting
+;	00bit		: Flag Register Type Bit (0=PMAC1 1=PMAC2)
+;	14bit		: Continue on Desired Position Limit Bit (0=program stops 1=program continues axis stops at 15bit=1)
+;	15bit		: Desired Position Limit Enable Bit (0=disable 1=enable)
+;	16bit		: Amplifier Enable Use Bit (0=used by amplifier-enable 1=not used by amplifier enable)
+;	17bit		: Overtravel Limit Use Bit (0=use 1=not use, input limti LS uses)
+;	18bit		: MACRO Node Use Bits (0=servo IC 1=MACRO-IC)
+;	20bit		: Amplifier Fault Use Bit (0=use amplifier fault 1=not use amplifier fault)
+;	21-22bit	: Action-on-Fault Bits (00=stop all 01=motors in same coordinate system 10=corresponding motor 11=not use)
+;	23bit		: Amplifier-Fault Polarity Bit (0=Negative 1=Positive)
+; --------------------------------------
+; --------------------------------------
+; Maintenance mode setting
+; --------------------------------------
+#define		MNT_MOTOR_ACTIVE		0			; Ixx00:Motor xx Activation Control, enable(=1)/disable(=0)
+#define		MNT_MOTOR_FOLW			0			; Ixx06:Motor xx Position Following Enable and Mode (0=disable 1=enable)
+#define		MNT_POS_CNV_RATE		96			; Ixx08:Motor xx Position Scale Factor (scale factor)
+#define		MNT_SPD_CNV_RATE		96			; Ixx09:Motor xx Velocity-Loop Scale Factor (scale factor)[96*1.6]
+#define		MNT_FLAG_VAL			$810001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit)
+; #define		MNT_FLAG_VAL			$830001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit)
+; #define		MNT_FLAG_VAL			$820001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit)
+
+; --------------------------------------
+; GAP axis
+; --------------------------------------
+#define		MOTOR_FOLW				0			; Ixx06:Motor xx Position Following Enable and Mode (0=disable 1=enable)
+#define		JOG_SPD					SPD_MIDL	; Ixx22:Motor xx Jog Speed
+#define		MOTOR_FLAG_VAL			$810001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit) [for GAP#2](Rev 2013/10/15)
+; #define		MOTOR_FLAG_VAL			$830001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit) [for GAP#2](Rev 2013/10/15)
+; #define		MOTOR_FLAG_VAL			$820001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit)[for GAP#2](Rev 2013/10/15)
+#define		GAP_INPOSITION			2560		; Ixx28:GAP axis INPOSITION
+#define		MOTOR_JOG_MODE			$810001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit) [for GAP#2-5]
+; #define		MOTOR_JOG_MODE			$830001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit) [for GAP#2-5]
+; #define		MOTOR_JOG_MODE			$820001		; Ixx24:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit) [for GAP#2-5]
+#define		STOP_BAND_WIDTH			0			; Ixx41:Motor xx Flag Mode Control (AMP fault/FE fault/Position limit) [for GAP#2-5](Add 2013/10/15)
+
+
+; ----------
+; GAP[#1-#2]
+; ----------
+; #define		PROPO_GAIN_UP				81458		; Ixx30:Motor xx PID Proportional Gain [#1-#2]
+; #define		PROPO_GAIN_UP				40729		; Ixx30:Motor xx PID Proportional Gain [#1-#2]
+; #define		PROPO_GAIN_UP				61300		; Ixx30:Motor xx PID Proportional Gain [#1-#2](reviewed:2014/04/23)
+; #define		PROPO_GAIN_UP				30650		; Ixx30:Motor xx PID Proportional Gain [#1-#2](reviewed:2014/04/23)
+#define		PROPO_GAIN_UP				25650		; Ixx30:Motor xx PID Proportional Gain [#1-#2](reviewed:2014/04/23 -5000)
+#define		DERIV_GAIN_UP				8258		; Ixx31:Motor xx PID Derivative Gain [#1-#2]
+#define		SPEED_GAIN_UP				8400		; Ixx32:Motor xx PID Velocity Feedforward Gain [#1-#2]
+#define		INTEG_GAIN_UP				80000		; Ixx33:Motor xx PID Integral Gain [#1-#2]
+#define		ACC_FF_GAIN_UP				60000		; Ixx35:Motor xx PID Acceleration Feedforward Gain [#1-#2]
+
+
+; ----------
+; GAP[#3-#4]
+; ----------
+; #define		PROPO_GAIN_DN				55342		; Ixx30:Motor xx PID Proportional Gain [#3-#4]
+; #define		PROPO_GAIN_DN				27671		; Ixx30:Motor xx PID Proportional Gain [#3-#4]
+; #define		PROPO_GAIN_DN				55300		; Ixx30:Motor xx PID Proportional Gain [#3-#4](reviewed:2014/04/23)
+; #define		PROPO_GAIN_DN				27650		; Ixx30:Motor xx PID Proportional Gain [#3-#4](reviewed:2014/04/23)
+#define		PROPO_GAIN_DN				22650		; Ixx30:Motor xx PID Proportional Gain [#3-#4](reviewed:2014/04/23 -5000)
+#define		DERIV_GAIN_DN				8216		; Ixx31:Motor xx PID Derivative Gain [#3-#4]
+#define		SPEED_GAIN_DN				8216		; Ixx32:Motor xx PID Velocity Feedforward Gain [#3-#4]
+#define		INTEG_GAIN_DN				120350		; Ixx33:Motor xx PID Integral Gain [#3-#4]
+#define		ACC_FF_GAIN_DN				149043		; Ixx35:Motor xx PID Acceleration Feedforward Gain [#3-#4]
+
+#define		INTEG_MODE					0			; Ixx34:PID Integral Mode (1: at stop, 0: always)
+
+
+#define		FLAG_ADDR1				$078000			; Ixx25:Motor xx Flag Address (for #1)
+#define		FLAG_ADDR2				$078008			; Ixx25:Motor xx Flag Address (for #2)
+#define		FLAG_ADDR3				$078010			; Ixx25:Motor xx Flag Address (for #3)
+#define		FLAG_ADDR4				$078018			; Ixx25:Motor xx Flag Address (for #4)
+#define		FLAG_ADDR5				$078100			; Ixx25:Motor xx Flag Address (for #5)
+#define		FLAG_ADDR6				$078108			; Ixx25:Motor xx Flag Address (for #6)
+#define		FLAG_ADDR7				$078110			; Ixx25:Motor xx Flag Address (for #7)
+#define		FLAG_ADDR8				$078118			; Ixx25:Motor xx Flag Address (for #8)
+
+
+
+#define		NONE_ADDR1				$0010F0			; Unused Address (for #1)
+#define		NONE_ADDR2				$0010F1			; Unused Address (for #2)
+#define		NONE_ADDR3				$0010F2			; Unused Address (for #3)
+#define		NONE_ADDR4				$0010F3			; Unused Address (for #4)
+#define		NONE_ADDR5				$0010F4			; Unused Address (for #5)
+#define		NONE_ADDR6				$0010F5			; Unused Address (for #6)
+#define		NONE_ADDR7				$0010F6			; Unused Address (for #7)
+#define		NONE_ADDR8				$0010F7			; Unused Address (for #8)
+
+
+#define		DAC_OUT_LMT				29500			; Ixx69:Motor xx Output Command Limit (=9.00V[32767=10V])
+
+#define		DAC_1_CALIB_VAL			247				; Ixx29:Motor xx Output/First Phase Offset [MOT(#1)]
+#define		DAC_2_CALIB_VAL			551				; Ixx29:Motor xx Output/First Phase Offset [MOT(#2)]
+#define		DAC_3_CALIB_VAL			1105			; Ixx29:Motor xx Output/First Phase Offset [MOT(#3)]
+#define		DAC_4_CALIB_VAL			66				; Ixx29:Motor xx Output/First Phase Offset [MOT(#4)]
+#define		SERVO_DELAY_CNT			0				; Ixx60:Motor xx Servo Cycle Period Extension Period
+#define		SLIP_1_VAL				0				; Ixx68:Motor xx Friction Feedforward [GAP(#1)]
+#define		SLIP_2_VAL				0				; Ixx68:Motor xx Friction Feedforward [GAP(#2)]
+#define		SLIP_3_VAL				0				; Ixx68:Motor xx Friction Feedforward [GAP(#3)]
+#define		SLIP_4_VAL				0				; Ixx68:Motor xx Friction Feedforward [GAP(#4)]
+
+
+
+; --------------------------------------
+; Software limit, upper limit and lower limit
+; --------------------------------------
+; --------------------------------------
+; GAP axis
+; --------------------------------------
+#define		PLG_CNV_RATE			96				; Ixx07:Motor xx Master (Handwheel) Scale Factor
+#define		POS_CNV_RATE			96				; Ixx08:Motor xx Position Scale Factor (scale factor)
+#define		SPD_CNV_RATE			96				; Ixx09:Motor xx Velocity-Loop Scale Factor (scale factor)
+#define		SOFT_UPPER_LIMIT		4.5*10000000	; Ixx13:Motor xx Positive Software Position Limit (count)
+#define		SOFT_LOWER_LIMIT		-4.5*10000000	; Ixx14:Motor xx Negative Software Position Limit (count)
+
+
+; --------------------------------------
+; BiSS-C starting timer
+; --------------------------------------
+#define		WAIT_TIMER_FNC			I5111=(1000)*8388608/I10 WHILE(I5111>0)ENDW		; 1000msec timer
+#define		BISS_C_TIMER_FNC		I5111=(500)*8388608/I10 WHILE(I5111>0)ENDW		; 500msec timer
+#define		SV_RDY_TIMER_FNC		I5111=(20)*8388608/I10 WHILE(I5111>0)ENDW		; 20msec timer
+#define		KILL_TIMER_FNC			I5111=(100)*8388608/I10 WHILE(I5111>0)ENDW		; 100msec timer
+#define		HOLD_TIMER_FNC			I5111=(300)*8388608/I10 WHILE(I5111>0)ENDW		; 300msec timer
+#define		BRK_OFF_TIMER_FNC		I5111=(100)*8388608/I10 WHILE(I5111>0)ENDW		; 100msec timer
+#define		MOT_DRV_TIMER_FNC		I5111=(100)*8388608/I10 WHILE(I5111>0)ENDW		; 100msec timer
+#define		TEST_TIMER_FNC			I5111=(130)*8388608/I10 WHILE(I5111>0)ENDW		; 130msec timer by kashima
+#define		TN_RDY_TIMER_FNC		I5111=(15)*8388608/I10 WHILE(I5111>0)ENDW		; 15msec timer
+
+#define		BISS_1_TMOUT_REG		M3420		; BiSS-C #1 Timeout
+#define		BISS_2_TMOUT_REG		M3421		; BiSS-C #2 Timeout
+#define		BISS_3_TMOUT_REG		M3422		; BiSS-C #3 Timeout
+#define		BISS_4_TMOUT_REG		M3423		; BiSS-C #4 Timeout
+#define		BISS_5_TMOUT_REG		M3424		; BiSS-C #5 Timeout
+#define		BISS_6_TMOUT_REG		M3425		; BiSS-C #6 Timeout
+#define		BISS_7_TMOUT_REG		M3426		; BiSS-C #7 Timeout
+#define		BISS_8_TMOUT_REG		M3427		; BiSS-C #8 Timeout
+
+#define		BISS_1_CRCER_REG		M3430		; BiSS-C #1 CRC error
+#define		BISS_2_CRCER_REG		M3431		; BiSS-C #2 CRC error
+#define		BISS_3_CRCER_REG		M3432		; BiSS-C #3 CRC error
+#define		BISS_4_CRCER_REG		M3433		; BiSS-C #4 CRC error
+#define		BISS_5_CRCER_REG		M3434		; BiSS-C #5 CRC error
+#define		BISS_6_CRCER_REG		M3435		; BiSS-C #6 CRC error
+#define		BISS_7_CRCER_REG		M3436		; BiSS-C #7 CRC error
+#define		BISS_8_CRCER_REG		M3437		; BiSS-C #8 CRC error
+
+
+
+; --------------------------------------
+; Amplifier alarm
+; --------------------------------------
+#define		AMP_ALM_1_REG			M123	; MOTOR #1(GAP UP)
+#define		AMP_ALM_2_REG			M223	; MOTOR #2(GAP UP)
+#define		AMP_ALM_3_REG			M323	; MOTOR #3(GAP DN)
+#define		AMP_ALM_4_REG			M423	; MOTOR #4(GAP DN)
+#define		AMP_ALM_5_REG			M523	; MOTOR #5
+#define		AMP_ALM_6_REG			M623	; MOTOR #6
+#define		AMP_ALM_7_REG			M723	; MOTOR #7
+#define		AMP_ALM_8_REG			M823	; MOTOR #8
+
+; --------------------------------------
+; Amplifier fault
+; --------------------------------------
+#define		AMP_FLT_1_REG			M143	; MOTOR #1(GAP UP)
+#define		AMP_FLT_2_REG			M243	; MOTOR #2(GAP UP)
+#define		AMP_FLT_3_REG			M343	; MOTOR #3(GAP DN)
+#define		AMP_FLT_4_REG			M443	; MOTOR #4(GAP DN)
+#define		AMP_FLT_5_REG			M543	; MOTOR #5
+#define		AMP_FLT_6_REG			M643	; MOTOR #6
+#define		AMP_FLT_7_REG			M743	; MOTOR #7
+#define		AMP_FLT_8_REG			M843	; MOTOR #8
+
+
+; --------------------------------------
+; Position deviation fault
+; --------------------------------------
+#define		DVI_FLT_1_REG			M142	; MOTOR #1(GAP UP)
+#define		DVI_FLT_2_REG			M242	; MOTOR #2(GAP UP)
+#define		DVI_FLT_3_REG			M342	; MOTOR #3(GAP DN)
+#define		DVI_FLT_4_REG			M442	; MOTOR #4(GAP DN)
+#define		DVI_FLT_5_REG			M542	; MOTOR #5
+#define		DVI_FLT_6_REG			M642	; MOTOR #6
+#define		DVI_FLT_7_REG			M742	; MOTOR #7
+#define		DVI_FLT_8_REG			M842	; MOTOR #8
+
+
+; --------------------------------------
+; OPEN-LOOP
+; --------------------------------------
+#define		MOT_OPN_1_REG			M138	; MOTOR #1 OPEN-LOOP
+#define		MOT_OPN_2_REG			M238	; MOTOR #2 OPEN-LOOP
+#define		MOT_OPN_3_REG			M338	; MOTOR #3 OPEN-LOOP
+#define		MOT_OPN_4_REG			M438	; MOTOR #4 OPEN-LOOP
+#define		MOT_OPN_5_REG			M538	; MOTOR #5 OPEN-LOOP
+#define		MOT_OPN_6_REG			M638	; MOTOR #6 OPEN-LOOP
+
+
+; --------------------------------------
+; Velocity-zero
+; --------------------------------------
+#define		MOT_SPDZ_1_REG			M133	; MOTOR #1 Velocity-zero
+#define		MOT_SPDZ_2_REG			M233	; MOTOR #2 Velocity-zero
+#define		MOT_SPDZ_3_REG			M333	; MOTOR #3 Velocity-zero
+#define		MOT_SPDZ_4_REG			M433	; MOTOR #4 Velocity-zero
+#define		MOT_SPDZ_5_REG			M533	; MOTOR #5 Velocity-zero
+#define		MOT_SPDZ_6_REG			M633	; MOTOR #6 Velocity-zero
+
+
+; --------------------------------------
+; In-position
+; --------------------------------------
+#define		MOT_INP_1_REG			M140	; MOTOR #1 In-position
+#define		MOT_INP_2_REG			M240	; MOTOR #2 In-position
+#define		MOT_INP_3_REG			M340	; MOTOR #3 In-position
+#define		MOT_INP_4_REG			M440	; MOTOR #4 In-position
+#define		MOT_INP_5_REG			M540	; MOTOR #5 In-position
+#define		MOT_INP_6_REG			M640	; MOTOR #6 In-position
+
+
+
+; --------------------------------------
+; LS input address
+; --------------------------------------
+#define		OPEN_KILL_1_REG			M17				; J7-1
+#define		OPEN_KILL_2_REG			M21				; J7-3
+#define		OPEN_KILL_REG			(OPEN_KILL_1_REG & OPEN_KILL_2_REG)
+; #define		OPEN_KILL_REG			(OPEN_KILL_1_REG | OPEN_KILL_2_REG)
+
+
+
+; --------
+;	USE J4
+; --------
+#define		POSI_1_REG				M121			; J4-14
+#define		POSI_2_REG				M221			; J4-17
+#define		POSI_3_REG				M321			; J4-20
+#define		POSI_4_REG				M421			; J4-23
+; --------
+;	USE J5
+; --------
+; #define		POSI_1_REG				M521			; J5-14
+; #define		POSI_2_REG				M621			; J5-17
+; #define		POSI_3_REG				M721			; J5-20
+; #define		POSI_4_REG				M821			; J5-23
+
+
+; --------
+;	USE J4
+; --------
+#define		NEGA_1_REG				M122			; J4-2
+#define		NEGA_2_REG				M222			; J4-5
+#define		NEGA_3_REG				M322			; J4-8
+#define		NEGA_4_REG				M422			; J4-11
+; --------
+;	USE J5
+; --------
+; #define		NEGA_1_REG				M522			; J5-2
+; #define		NEGA_2_REG				M622			; J5-5
+; #define		NEGA_3_REG				M722			; J5-8
+; #define		NEGA_4_REG				M822			; J5-11
+
+#define		OPEN_1_REG				(POSI_1_REG | POSI_2_REG)
+#define		OPEN_2_REG				(POSI_3_REG | POSI_4_REG)
+#define		OPEN_REG				(POSI_1_REG | POSI_2_REG | POSI_3_REG | POSI_4_REG)
+
+; --------
+;	USE J4
+; --------
+#define		OUT_REG					M215			; J4-4
+; --------
+;	USE J5
+; --------
+; #define		OUT_REG					M615			; J5-4
+
+; --------
+;	USE J4
+; --------
+#define		HOME_1_REG				M120			; J4-15
+#define		HOME_2_REG				M220			; J4-12
+#define		HOME_3_REG				M320			; J4-21
+#define		HOME_4_REG				M420			; J4-24
+
+; --------
+;	USE J5
+; --------
+; #define		HOME_1_REG				M520			; J5-15
+; #define		HOME_2_REG				M620			; J5-12
+; #define		HOME_3_REG				M720			; J5-21
+; #define		HOME_4_REG				M820			; J5-24
+
+#define		HOME_REG				(HOME_1_REG | HOME_2_REG | HOME_3_REG | HOME_4_REG)
+
+; --------
+;	USE J4
+; --------
+#define		IN_REG					M115			; J4-1
+; --------
+;	USE J5
+; --------
+; #define		IN_REG					M515			; J5-1
+
+#define		GAP_CLOSE_KILL_REG		M19				; J7-2
+#define		GAP_CLOSE_REG			M23				; J7-4
+
+#define		CLOSE_1_REG				M22				; J7-22
+#define		CLOSE_2_REG				M24				; J7-23
+#define		CLOSE_REG				(CLOSE_1_REG & CLOSE_2_REG)
+
+#define		CLOSE_KILL_1_REG		M18				; J7-20
+#define		CLOSE_KILL_2_REG		M20				; J7-21
+#define		CLOSE_KILL_REG			(CLOSE_KILL_1_REG & CLOSE_KILL_2_REG)
+; #define		CLOSE_KILL_REG			(CLOSE_KILL_1_REG | CLOSE_KILL_2_REG)
+
+
+
+; --------------------------------------
+; BRAKE & BEACON output address
+; --------------------------------------
+#define		JACK_BREKE_REG			M41
+#define		UP_UP_BREKE_REG			M42
+#define		UP_DN_BREKE_REG			M43
+#define		LO_UP_BREKE_REG			M44
+#define		LO_DN_BREKE_REG			M45
+#define		BEACON_REG				M48
+
+
+; --------------------------------------
+;	DAC output address definition
+; --------------------------------------
+#define		DAC_OUTPUT_CH01_REG		$078002		; DAC CH01
+#define		DAC_OUTPUT_CH02_REG		$07800A		; DAC CH02
+#define		DAC_OUTPUT_CH03_REG		$078012		; DAC CH03
+#define		DAC_OUTPUT_CH04_REG		$07801A		; DAC CH04
+#define		DAC_OUTPUT_CH05_REG		$078102		; DAC CH05
+#define		DAC_OUTPUT_CH06_REG		$07810A		; DAC CH06
+
+
+; --------------------------------------
+;	DAC offset address definition
+; --------------------------------------
+#define		DAC_OFFSET_CH01_REG		$0000BF		; DAC OFFSET CH01
+#define		DAC_OFFSET_CH02_REG		$00013F		; DAC OFFSET CH02
+#define		DAC_OFFSET_CH03_REG		$0001BF		; DAC OFFSET CH03
+#define		DAC_OFFSET_CH04_REG		$00023F		; DAC OFFSET CH04
+#define		DAC_OFFSET_CH05_REG		$0002BF		; DAC OFFSET CH05
+#define		DAC_OFFSET_CH06_REG		$00033F		; DAC OFFSET CH06
+
+#define		DAC_OFFSET_CH17_REG		$0008BF		; DAC OFFSET CH17
+#define		DAC_OFFSET_CH18_REG		$00093F		; DAC OFFSET CH18
+#define		DAC_OFFSET_CH19_REG		$0009BF		; DAC OFFSET CH19
+#define		DAC_OFFSET_CH20_REG		$000A3F		; DAC OFFSET CH20
+#define		DAC_OFFSET_CH21_REG		$000ABF		; DAC OFFSET CH21
+#define		DAC_OFFSET_CH22_REG		$000B3F		; DAC OFFSET CH22
+
+
+#define		BISS_1_D_REG			M3400
+#define		BISS_1_U_REG			M3401
+
+#define		BISS_2_D_REG			M3402
+#define		BISS_2_U_REG			M3403
+
+#define		BISS_3_D_REG			M3404
+#define		BISS_3_U_REG			M3405
+
+#define		BISS_4_D_REG			M3406
+#define		BISS_4_U_REG			M3407
+
+#define		BISS_5_D_REG			M3408
+#define		BISS_5_U_REG			M3409
+
+#define		BISS_6_D_REG			M3410
+#define		BISS_6_U_REG			M3411
+
+
+; --------------------------------------
+;	Acceleration command definition
+; --------------------------------------
+#define		MOT_ACC_1_REG			M3311	; MOTOR #1
+#define		MOT_ACC_2_REG			M3312	; MOTOR #2
+#define		MOT_ACC_3_REG			M3313	; MOTOR #3
+#define		MOT_ACC_4_REG			M3314	; MOTOR #4
+#define		MOT_ACC_5_REG			M3315	; MOTOR #5
+#define		MOT_ACC_6_REG			M3316	; MOTOR #6
+#define		MOT_ACC_7_REG			M3317	; MOTOR #7
+#define		MOT_ACC_8_REG			M3318	; MOTOR #8
+
+
+
+; ------------------
+; Servo-Ready
+; ------------------
+#define		MOT_SRDY_1_REG			M1	; MOTOR #1 SERVO READY
+#define		MOT_SRDY_2_REG			M2	; MOTOR #2 SERVO READY
+#define		MOT_SRDY_3_REG			M3	; MOTOR #3 SERVO READY
+#define		MOT_SRDY_4_REG			M4	; MOTOR #4 SERVO READY
+#define		MOT_SRDY_5_REG			M5	; MOTOR #5 SERVO READY
+#define		MOT_SRDY_6_REG			M6	; MOTOR #6 SERVO READY
+
+
+
+#define		EMERGENCY_REG			M32			; EMERGENCY-STOP button status (EMR&WS)
+; #define		EMERGENCY_REG		M8			; EMERGENCY-STOP button status (J6_IN1_7)
+
+; ------------------
+; Alarm-Clear
+; ------------------
+#define		AMP_ALM_1_CLR_REG		M33			; GAP(#1)
+#define		AMP_ALM_2_CLR_REG		M34			; GAP(#2)
+#define		AMP_ALM_3_CLR_REG		M35			; GAP(#3)
+#define		AMP_ALM_4_CLR_REG		M36			; GAP(#4)
+; #define		AMP_ALM_5_CLR_REG		M37			; GAP
+
+
+#define		FSAVE_ERR_REG			M3600		; FSAVE error status
+
+
+; ------------------
+; Program Status
+; ------------------
+#define		PROG_STAT_REG			M5180		; &1(ç¿ïWån1[GAP])
+#define		PROG2STAT_REG			M5280		; &2(ç¿ïWån2[JACK]<-not use)
+
+
+; --------------------------------------
+;	W{ADR},{VAL},{VAL}
+;	Write VAL into ADR
+; --------------------------------------
+; --------------------------------------
+;	Linear encoder (BiSS)
+; --------------------------------------
+#define		BISS_GLB_CNT1_REG		$078B2F		; BiSS Grobal Control Register(ch1 - ch4)
+#define		BISS_GLB_CNT2_REG		$078B3F		; BiSS Grobal Control Register(ch5 - ch8)
+
+#define		BISS_CH01_DAT_REG		$078B20		; BiSS ch01 data Register(UPPER)
+#define		BISS_CH02_DAT_REG		$078B24		; BiSS ch02 data Register(UPPER)
+#define		BISS_CH03_DAT_REG		$078B28		; BiSS ch03 data Register(LOWER)
+#define		BISS_CH04_DAT_REG		$078B2C		; BiSS ch04 data Register(LOWER)
+#define		BISS_CH05_DAT_REG		$078B30		; BiSS ch05 data Register
+#define		BISS_CH06_DAT_REG		$078B34		; BiSS ch06 data Register
+#define		BISS_CH07_DAT_REG		$078B38		; BiSS ch07 data Register
+#define		BISS_CH08_DAT_REG		$078B3C		; BiSS ch08 data Register
+
+
+; --------------------------------------
+; Rotary encoder (Quadrature)
+; 24bit Position data
+; --------------------------------------
+#define		ROT_CH01_DAT_REG		$078000		; ENC #1 Source Address
+#define		ROT_CH02_DAT_REG		$078008		; ENC #2 Source Address
+#define		ROT_CH03_DAT_REG		$078010		; ENC #3 Source Address
+#define		ROT_CH04_DAT_REG		$078018		; ENC #4 Source Address
+#define		ROT_CH05_DAT_REG		$078100		; ENC #5 Source Address
+#define		ROT_CH06_DAT_REG		$078108		; ENC #6 Source Address
+#define		ROT_CH07_DAT_REG		$078110		; ENC #7 Source Address
+#define		ROT_CH08_DAT_REG		$078118		; ENC #8 Source Address
+
+
+; --------------------------------------
+; Encoder conversion table setting
+; --------------------------------------
+; 24bit Position data(Rotary Encoder)
+; --------------------------------------
+I8000 = ROT_CH01_DAT_REG		; ROT Encoder#1(1/T)
+I8001 = ROT_CH02_DAT_REG		; ROT Encoder#2(1/T)
+I8002 = ROT_CH03_DAT_REG		; ROT Encoder#3(1/T)
+I8003 = ROT_CH04_DAT_REG		; ROT Encoder#4(1/T)
+I8004 = ROT_CH05_DAT_REG		; ROT Encoder#5(1/T)
+I8005 = ROT_CH06_DAT_REG		; ROT Encoder#6(1/T)
+I8006 = ROT_CH07_DAT_REG		; ROT Encoder#7(1/T)
+I8007 = ROT_CH08_DAT_REG		; ROT Encoder#8(1/T)
+
+
+; --------------------------------------
+; MACRO IC(default)
+; --------------------------------------
+#define		MACRO_IC_0_0		$2F8420
+#define		MACRO_IC_0_1		$2F8424
+#define		MACRO_IC_0_4		$2F8428
+#define		MACRO_IC_0_5		$2F842C
+#define		MACRO_IC_0_8		$2F8430
+#define		MACRO_IC_0_9		$2F8434
+#define		MACRO_IC_0_12		$2F8438
+#define		MACRO_IC_0_13		$2F843C
+#define		MACRO_DATA_BIT		$018000
+
+
+I8008 = MACRO_IC_0_0		; $003509
+I8009 = MACRO_DATA_BIT
+I8010 = MACRO_IC_0_1
+I8011 = MACRO_DATA_BIT
+I8012 = MACRO_IC_0_4
+I8013 = MACRO_DATA_BIT
+I8014 = MACRO_IC_0_5
+I8015 = MACRO_DATA_BIT
+I8016 = MACRO_IC_0_8
+I8017 = MACRO_DATA_BIT
+I8018 = MACRO_IC_0_9
+I8019 = MACRO_DATA_BIT
+I8020 = MACRO_IC_0_12
+I8021 = MACRO_DATA_BIT
+I8022 = MACRO_IC_0_13
+I8023 = MACRO_DATA_BIT		; $003518
+
+
+; --------------------------------------
+; 32bit Position data(Linear Encoder)
+; --------------------------------------
+#define		BISS_DAT_BIT	$020000
+
+I8024 = $278B20					; BiSS Encoder#1($003519)
+I8025 = BISS_DAT_BIT			; BiSS Encoder#1
+
+I8026 = $278B24					; BiSS Encoder#2($00351B)
+I8027 = BISS_DAT_BIT			; BiSS Encoder#2
+
+I8028 = $278B28					; BiSS Encoder#3($00351D)
+I8029 = BISS_DAT_BIT			; BiSS Encoder#3
+
+I8030 = $278B2C					; BiSS Encoder#4($00351F)
+I8031 = BISS_DAT_BIT			; BiSS Encoder#4
+
+I8032 = $278B30					; BiSS Encoder#5($003521)
+I8033 = BISS_DAT_BIT			; BiSS Encoder#5
+
+I8034 = $278B34					; BiSS Encoder#6($003523)
+I8035 = BISS_DAT_BIT			; BiSS Encoder#6
+
+I8036 = $278B38					; BiSS Encoder#7($003525)
+I8037 = BISS_DAT_BIT			; BiSS Encoder#7
+
+I8038 = $278B3C					; BiSS Encoder#8($003527)
+I8039 = BISS_DAT_BIT			; BiSS Encoder#8
+
+
+; ------------------------
+; When using rotary encoder
+; ------------------------
+I8040 = $E00100					; ROT #1+#2($003529)
+I8041 = $E20100					; ROT #1-#2($00352A)
+I8042 = $E00302					; ROT #3+#4($00352B)
+I8043 = $E20302					; ROT #3-#4($00352C)
+
+; I8040 = $E00201					; ROT #2+#3($003529)
+; I8041 = $E20201					; ROT #2-#3($00352A)
+; I8042 = $E00403					; ROT #4+#5($00352B)
+; I8043 = $E20403					; ROT #4-#5($00352C)
+
+; ------------------------
+; When using linear encoder
+; ------------------------
+; I8040 = $E01D1B				; BiSS #2+#3($003529)
+; I8041 = $E21D1B				; BiSS #2-#3($00352A)
+; I8042 = $E0211F				; BiSS #4+#5($00352B)
+; I8043 = $E2211F				; BiSS #4-#5($00352C)
+
+;I8048 = $0						; end of table
+I8044 = $0						; end of table
+
+
+#define		ROT_ENC_1		$003501		; I8000
+#define		ROT_ENC_2		$003502
+#define		ROT_ENC_3		$003503
+#define		ROT_ENC_4		$003504
+#define		ROT_ENC_5		$003505
+#define		ROT_ENC_6		$003506
+#define		ROT_ENC_7		$003507
+#define		ROT_ENC_8		$003508		; I8007
+
+
+#define		BISS_ADD_1_2	$003529
+#define		BISS_SUB_1_2	$00352A
+#define		BISS_ADD_3_4	$00352B
+#define		BISS_SUB_3_4	$00352C
+; #define		BISS_ADD_2_3	$003529
+; #define		BISS_SUB_2_3	$00352A
+; #define		BISS_ADD_4_5	$00352B
+; #define		BISS_SUB_4_5	$00352C
+
+; ---------
+; for Debug
+I2500 = MOTOR_ACTIVE
+I2503 = $351A
+I2504 = $351A
+I2508 = 1
+I2509 = 1
+
+I2600 = MOTOR_ACTIVE
+I2603 = $351C
+I2604 = $351C
+I2608 = 1
+I2609 = 1
+
+I2700 = MOTOR_ACTIVE
+I2703 = $351E
+I2704 = $351E
+I2708 = 1
+I2709 = 1
+
+I2800 = MOTOR_ACTIVE
+I2803 = $3520
+I2804 = $3520
+I2808 = 1
+I2809 = 1
+
+I0900 = MOTOR_ACTIVE		; for GAP PISITION
+I1400 = MOTOR_ACTIVE		; for VERTICAL OFFSET
+
+I2200 = MOTOR_ACTIVE		; for VERTICAL OFFSET(UpStream)
+I2300 = MOTOR_ACTIVE		; for VERTICAL OFFSET(DownStream)
+; for Debug
+; ---------
+
+
+; --------------------------------------
+;	X axis definition
+; --------------------------------------
+; --------------------------------------
+;	#17 I variables setting
+; --------------------------------------
+I1700 = MOTOR_ACTIVE				; Motor Activation
+I1701 = COMMU_ACTIVE				; Commutation Enable
+I1702 = DAC_OUTPUT_CH01_REG			; Command Output Address
+I1703 = BISS_ADD_1_2				; Position Loop Feedback Address
+I1704 = BISS_ADD_1_2				; Velocity Loop Feedback Address
+I1706 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I1708 = POS_CNV_RATE				; Position Scale Factor
+I1709 = SPD_CNV_RATE				; Velocity-Loop Scale Factor
+I1710 = POWER_ON_INIT				; Power-On Servo Position Address
+
+; I1713 = SOFT_UPPER_LIMIT			; Positive Software Position Limit
+; I1714 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I1713 = 0							; Positive Software Position Limit
+I1714 = 0							; Negative Software Position Limit
+
+I1715 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I1716 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I1717 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I1719 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I1724 = MOTOR_FLAG_VAL				; Flag Mode Control
+I1725 = FLAG_ADDR1					; Flag Address (LS input)(use J4)
+; I1725 = FLAG_ADDR5					; Flag Address (LS input)(use J5)
+
+I1728 = GAP_INPOSITION				; Motor 17 In-Position Band
+
+I1730 = (PROPO_GAIN_UP)				; PID Proportional Gain
+I1731 = DERIV_GAIN_UP				; PID Derivative Gain
+I1732 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+I1733 = INTEG_GAIN_UP				; PID Integral Gain
+I1734 = INTEG_MODE					; PID Integration Mode
+I1735 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+I1741 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I1743 = FLAG_ADDR1					; GAP[#1] LS reference (use J4)
+; I1743 = FLAG_ADDR5					; GAP[#1] LS reference (use J5)
+
+I1769 = DAC_OUT_LMT					; Output Command Limit
+
+; --------------------------------------
+;	#1 I variables setting
+; --------------------------------------
+I0100 = MOTOR_ACTIVE				; Motor Activation
+I0101 = COMMU_ACTIVE				; Commutation Enable
+I0102 = DAC_OFFSET_CH18_REG			; Command Output Address
+I0103 = BISS_ADD_1_2				; Position Loop Feedback Address
+I0104 = BISS_ADD_1_2				; Velocity Loop Feedback Address
+I0105 = $35C0						; Master Position Address (ETC end)
+I0106 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I0108 = I1708						; Position Scale Factor
+I0109 = I1708						; Velocity-Loop Scale Factor
+I0110 = POWER_ON_INIT				; Power-On Servo Position Address
+
+I0111 = ERROR_DIV_VAL				; Fatal Following Error Limit (unit:1/16count 64000count)
+I0112 = WARNING_DIV_VAL				; Warning Following Error Limit (unit:1/16count 16000count)
+
+; I0113 = SOFT_UPPER_LIMIT			; Positive Software Position Limit
+; I0114 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I0113 = 0							; Positive Software Position Limit
+I0114 = 0							; Negative Software Position Limit
+
+I0115 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I0116 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I0117 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I0119 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I0120 = ACCEL_TIME 					; Jog/Home Acceleration Time (msec)
+I0121 = S_ACCEL_TIME 				; Jog/Home S-Curve Time (msec)
+I0122 = JOG_SPD*2					; Jog Speed
+I0124 = MOTOR_FLAG_VAL				; Flag Mode Control
+; I0125 = FLAG_ADDR1					; Flag Address (LS input)
+I0125 = NONE_ADDR1					; Flag Address (LS input)
+
+; I0128 = 51200						; Motor 1 In-Position Band
+I0128 = GAP_INPOSITION				; Motor 1 In-Position Band
+I0129 = DAC_1_CALIB_VAL				; Output/First Phase Offset
+
+I0130 = (PROPO_GAIN_UP)				; PID Proportional Gain
+I0131 = DERIV_GAIN_UP				; PID Derivative Gain
+I0132 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+I0133 = INTEG_GAIN_UP				; PID Integral Gain
+I0134 = INTEG_MODE					; PID Integration Mode
+I0135 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+I0141 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I0143 = FLAG_ADDR1					; GAP[#1] LS reference (use J4)
+; I0143 = FLAG_ADDR5					; GAP[#1] LS reference (use J5)
+
+I0160 = SERVO_DELAY_CNT				; Servo Cycle Period Extension Period
+
+I0165 = 640							; Deadband Size [2013/05/11]
+I0166 = 6527
+I0167 = 4194304
+I0168 = SLIP_1_VAL					; Friction Feedforward
+I0169 = DAC_OUT_LMT					; Output Command Limit
+
+I0186 = BACK_RUSH_VAL				; Backlash Size
+
+I0190 = 1							; Rapid Mode Speed Select 1:use Ixx16 / 0:use Ixx22
+
+; I0196 = SRDY_INIT					; Command Output Mode Control (Amp-Enable)
+
+; --------------------------------------
+;	A axis definition
+; --------------------------------------
+; --------------------------------------
+;	#18 I variable setting
+; --------------------------------------
+I1800 = MOTOR_ACTIVE				; Motor Activation
+I1801 = COMMU_ACTIVE				; Commutation Enable
+I1802 = DAC_OUTPUT_CH02_REG			; Command Output Address
+I1803 = BISS_SUB_1_2				; Position Loop Feedback Address
+I1804 = BISS_SUB_1_2				; Velocity Loop Feedback Address
+I1806 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I1808 = POS_CNV_RATE				; Position Scale Factor
+I1809 = SPD_CNV_RATE				; Velocity-Loop Scale Factor
+I1810 = POWER_ON_INIT				; Power-On Servo Position Address
+
+; I1813 = SOFT_UPPER_LIMIT			; Positive Software Position Limi
+; I1814 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I1813 = 0							; Positive Software Position Limi
+I1814 = 0							; Negative Software Position Limit
+
+I1815 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I1816 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I1817 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I1819 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+
+I1824 = MOTOR_FLAG_VAL				; Flag Mode Control
+I1825 = FLAG_ADDR2					; Flag Address (LS input) (use J4)
+; I1825 = FLAG_ADDR6					; Flag Address (LS input) (use J5)
+
+I1828 = GAP_INPOSITION				; Motor 18 In-Position Band
+
+I1830 = -(2*PROPO_GAIN_UP)			; PID Proportional Gain
+I1831 = DERIV_GAIN_UP				; PID Derivative Gain
+I1832 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+I1833 = INTEG_GAIN_UP				; PID Integral Gain
+I1834 = INTEG_MODE					; PID Integration Mode
+I1835 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+I1841 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I1843 = FLAG_ADDR2					; GAP[#2] LS reference (use J4)
+; I1843 = FLAG_ADDR6					; GAP[#2] LS reference (use J5)
+
+I1869 = DAC_OUT_LMT					; Output Command Limit
+
+
+; --------------------------------------
+;	#2 I variable setting
+; --------------------------------------
+I0200 = MOTOR_ACTIVE				; Motor Activation
+I0201 = COMMU_ACTIVE				; Commutation Enable
+I0202 = DAC_OFFSET_CH17_REG			; Command Output Address
+I0203 = BISS_SUB_1_2				; Position Loop Feedback Address
+I0204 = BISS_SUB_1_2				; Velocity Loop Feedback Address
+I0205 =	$35C0						; Master Position Address (ETC end)
+I0206 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I0208 = I1808						; Position Scale Factor
+; I0209 = I1809						; Velocity-Loop Scale Factor
+I0209 = I1808						; Velocity-Loop Scale Factor
+I0210 = POWER_ON_INIT				; Power-On Servo Position Address
+
+I0211 = ERROR_DIV_VAL				; Fatal Following Error Limit (unit:1/16count 64000count)
+I0212 = WARNING_DIV_VAL				; Warning Following Error Limit (unit:1/16count 16000count)
+
+; I0213 = SOFT_UPPER_LIMIT			; Positive Software Position Limit
+; I0214 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I0213 = 0							; Positive Software Position Limit
+I0214 = 0							; Negative Software Position Limit
+
+I0215 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I0216 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I0217 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I0219 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I0220 = ACCEL_TIME 					; Jog/Home Acceleration Time (msec)
+I0221 = S_ACCEL_TIME 				; Jog/Home S-Curve Time (msec)
+I0222 = JOG_SPD*2					; Jog Speed
+I0224 = MOTOR_FLAG_VAL				; Flag Mode Control
+; I0225 = FLAG_ADDR2					; Flag Address (LS input)
+I0225 = NONE_ADDR2					; Flag Address (LS input)
+
+; I0228 = 51200						; Motor 2 In-Position Band
+I0228 = GAP_INPOSITION				; Motor 2 In-Position Band
+I0229 = DAC_2_CALIB_VAL				; Output/First Phase Offset
+
+I0230 = (2*PROPO_GAIN_UP)			; PID Proportional Gain
+I0231 = DERIV_GAIN_UP				; PID Derivative Gain
+I0232 = SPEED_GAIN_UP				; PID Velocity Feedforward Gain
+I0233 = INTEG_GAIN_UP				; PID Integral Gain
+I0234 = INTEG_MODE					; PID Integration Mode
+I0235 = ACC_FF_GAIN_UP				; PID Acceleration Feedforward Gain
+
+I0241 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I0243 = FLAG_ADDR2					; GAP[#2] LS reference (use J4)
+; I0243 = FLAG_ADDR6					; GAP[#2] LS reference (use J5)
+
+I0260 = SERVO_DELAY_CNT				; Servo Cycle Period Extension Period
+
+I0265 = 640							; Deadband Size [2013/05/11]
+I0266 = 6527
+I0267 = 4194304
+I0268 = SLIP_2_VAL					; Friction Feedforward
+I0269 = DAC_OUT_LMT					; Output Command Limit
+
+I0286 = BACK_RUSH_VAL				; Backlash Size
+
+I0290 = 1							; Rapid Mode Speed Select 1:use Ixx16 / 0:use Ixx22
+
+; I0296 = SRDY_INIT					; Command Output Mode Control (Amp-Enable)
+
+
+
+
+; --------------------------------------
+;	Y axis definition
+; --------------------------------------
+; --------------------------------------
+;	#20 I variables setting
+; --------------------------------------
+I2000 = MOTOR_ACTIVE				; Motor Activation
+I2001 = COMMU_ACTIVE				; Commutation Enable
+I2002 = DAC_OUTPUT_CH03_REG			; Command Output Address
+I2003 = BISS_ADD_3_4				; Position Loop Feedback Address
+I2004 = BISS_ADD_3_4				; Velocity Loop Feedback Address
+I2006 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I2008 = POS_CNV_RATE				; Position Scale Factor
+I2009 = SPD_CNV_RATE				; Velocity-Loop Scale Factor
+I2010 = POWER_ON_INIT				; Power-On Servo Position Address
+
+; I2013 = SOFT_UPPER_LIMIT			; Positive Software Position Limit
+; I2014 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I2013 = 0							; Positive Software Position Limit
+I2014 = 0							; Negative Software Position Limit
+
+I2015 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I2016 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I2017 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I2019 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I2024 = MOTOR_FLAG_VAL				; Flag Mode Control
+I2025 = FLAG_ADDR3					; Flag Address (LS input)(use J4)
+; I2025 = FLAG_ADDR7					; Flag Address (LS input)(use J5)
+
+I2028 = GAP_INPOSITION				; Motor 20 In-Position Band
+
+I2030 = (PROPO_GAIN_DN)				; PID Proportional Gain
+I2031 = DERIV_GAIN_DN				; PID Derivative Gain
+I2032 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+I2033 = INTEG_GAIN_DN				; PID Integral Gain
+I2034 = INTEG_MODE					; PID Integration Mode
+I2035 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+I2041 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I2043 = FLAG_ADDR3					; GAP[#3] LS reference (use J4)
+; I2043 = FLAG_ADDR7					; GAP[#3] LS reference (use J5)
+
+I2069 = DAC_OUT_LMT					; Output Command Limit
+
+
+; --------------------------------------
+;	#3 I variables setting
+; --------------------------------------
+I0300 = MOTOR_ACTIVE				; Motor Activation
+I0301 = COMMU_ACTIVE				; Commutation Enable
+I0302 = DAC_OFFSET_CH21_REG			; Command Output Address
+I0303 = BISS_ADD_3_4				; Position Loop Feedback Address
+I0304 = BISS_ADD_3_4				; Velocity Loop Feedback Address
+I0305 = $35C0						; Master Position Address (ETC end)
+I0306 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I0308 = I2008						; Position Scale Factor
+; I0309 = I2009						; Velocity-Loop Scale Factor
+I0309 = I2008						; Velocity-Loop Scale Factor
+I0310 = POWER_ON_INIT
+
+I0311 = ERROR_DIV_VAL				; Fatal Following Error Limit (unit:1/16count 64000count)
+I0312 = WARNING_DIV_VAL				; Warning Following Error Limit (unit:1/16count 16000count)
+
+; I0313 = SOFT_UPPER_LIMIT			; Positive Software Position Limit
+; I0314 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I0313 = 0							; Positive Software Position Limit
+I0314 = 0							; Negative Software Position Limit
+
+I0315 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I0316 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I0317 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I0319 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I0320 = ACCEL_TIME 					; Jog/Home Acceleration Time (msec)
+I0321 = S_ACCEL_TIME 				; Jog/Home S-Curve Time (msec)
+I0322 = JOG_SPD*2					; Jog Speed
+I0324 = MOTOR_FLAG_VAL				; Flag Mode Control
+; I0325 = FLAG_ADDR3					; Flag Address (LS input)
+I0325 = NONE_ADDR3					; Flag Address (LS input)
+
+; I0328 = 51200						; Motor 3 In-Position Band
+I0328 = GAP_INPOSITION				; Motor 3 In-Position Band
+I0329 = DAC_3_CALIB_VAL				; Output/First Phase Offset
+
+I0330 = (PROPO_GAIN_DN)				; PID Proportional Gain
+I0331 = DERIV_GAIN_DN				; PID Derivative Gain
+I0332 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+I0333 = INTEG_GAIN_DN				; PID Integral Gain
+I0334 = INTEG_MODE					; PID Integration Mode
+I0335 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+I0341 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I0343 = FLAG_ADDR3					; GAP[#3] LS reference (use J4)
+; I0343 = FLAG_ADDR7					; GAP[#3] LS reference (use J5)
+
+I0360 = SERVO_DELAY_CNT				; Servo Cycle Period Extension Period
+
+I0365 = 640							; Deadband Size [2013/05/11]
+I0366 = 6527
+I0367 = 4194304
+I0368 = SLIP_3_VAL					; Friction Feedforward
+I0369 = DAC_OUT_LMT					; Output Command Limit
+
+I0386 = BACK_RUSH_VAL				; Backlash Size
+
+I0390 = 1							; Rapid Mode Speed Select 1:use Ixx16 / 0:use Ixx22
+
+; I0396 = SRDY_INIT					; Command Output Mode Control (Amp-Enable)
+
+
+; --------------------------------------
+;	B axis definition
+; --------------------------------------
+; --------------------------------------
+;	#21 I variables setting
+; --------------------------------------
+I2100 = MOTOR_ACTIVE				; Motor Activation
+I2101 = COMMU_ACTIVE				; Commutation Enable
+I2102 = DAC_OUTPUT_CH04_REG			; Command Output Address
+I2103 = BISS_SUB_3_4				; Position Loop Feedback Address
+I2104 = BISS_SUB_3_4				; Velocity Loop Feedback Address
+I2106 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I2108 = POS_CNV_RATE				; Position Scale Factor
+I2109 = SPD_CNV_RATE				; Velocity-Loop Scale Factor
+I2110 = POWER_ON_INIT				; Power-On Servo Position Address
+
+; I2113 = SOFT_UPPER_LIMIT			; Positive Software Position Limi
+; I2114 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I2113 = 0							; Positive Software Position Limi
+I2114 = 0							; Negative Software Position Limit
+
+I2115 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I2116 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I2117 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I2119 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I2124 = MOTOR_FLAG_VAL				; Flag Mode Control
+I2125 = FLAG_ADDR4					; Flag Address (LS input)(use J4)
+; I2125 = FLAG_ADDR8					; Flag Address (LS input)(use J5)
+
+I2128 = GAP_INPOSITION				; Motor 21 In-Position Band
+
+I2130 = -(2*PROPO_GAIN_DN)			; PID Proportional Gain
+I2131 = DERIV_GAIN_DN				; PID Derivative Gain
+I2132 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+I2133 = INTEG_GAIN_DN				; PID Integral Gain
+I2134 = INTEG_MODE					; PID Integration Mode
+I2135 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+I2141 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I2143 = FLAG_ADDR4					; GAP[#4] LS reference (use J4)
+; I2143 = FLAG_ADDR8					; GAP[#4] LS reference (use J5)
+
+I2169 = DAC_OUT_LMT					; Output Command Limit
+
+; --------------------------------------
+;	#4 I variables setting
+; --------------------------------------
+I0400 = MOTOR_ACTIVE				; Motor Activation
+I0401 = COMMU_ACTIVE				; Commutation Enable
+I0402 = DAC_OFFSET_CH20_REG			; Command Output Address
+I0403 = BISS_SUB_3_4				; Position Loop Feedback Address
+I0404 = BISS_SUB_3_4				; Velocity Loop Feedback Address
+I0405 = $35C0						; Master Position Address (ETC end)
+I0406 = MOTOR_FOLW					; Position Following Enable and Mode
+
+I0408 = I2108						; Position Scale Factor
+; I0409 = I2109						; Velocity-Loop Scale Factor
+I0409 = I2108						; Velocity-Loop Scale Factor
+I0410 = POWER_ON_INIT				; Power-On Servo Position Address
+
+I0411 = ERROR_DIV_VAL				; Fatal Following Error Limit (unit:1/16count 64000count)
+I0412 = WARNING_DIV_VAL				; Warning Following Error Limit (unit:1/16count 16000count)
+
+; I0413 = SOFT_UPPER_LIMIT			; Positive Software Position Limit
+; I0414 = SOFT_LOWER_LIMIT			; Negative Software Position Limit
+I0413 = 0							; Positive Software Position Limit
+I0414 = 0							; Negative Software Position Limit
+
+I0415 = RED_VAL						; Abort/Limit Deceleration Rate (unit:count/msec2)
+I0416 = JOG_SPD*2					; Maximum Program Velocity (unit:count/msec)
+I0417 = ACC_VAL						; Maximum Program Acceleration (unit:count/msec2)
+I0419 = ACC_VAL						; Maximum Jog/Home Acceleration (unit:count/msec2)
+
+I0420 = ACCEL_TIME 					; Jog/Home Acceleration Time (msec)
+I0421 = S_ACCEL_TIME 				; Jog/Home S-Curve Time (msec)
+I0422 = JOG_SPD*2					; Jog Speed
+I0424 = MOTOR_FLAG_VAL				; Flag Mode Control
+; I0425 = FLAG_ADDR4					; Flag Address (LS input)
+I0425 = NONE_ADDR4					; Flag Address (LS input)
+
+; I0428 = 51200						; Motor 4 In-Position Band
+I0428 = GAP_INPOSITION				; Motor 4 In-Position Band
+I0429 = DAC_4_CALIB_VAL				; Output/First Phase Offset
+
+I0430 = (2*PROPO_GAIN_DN)			; PID Proportional Gain
+I0431 = DERIV_GAIN_DN				; PID Derivative Gain
+I0432 = SPEED_GAIN_DN				; PID Velocity Feedforward Gain
+I0433 = INTEG_GAIN_DN				; PID Integral Gain
+I0434 = INTEG_MODE					; PID Integration Mode
+I0435 = ACC_FF_GAIN_DN				; PID Acceleration Feedforward Gain
+
+I0441 = STOP_BAND_WIDTH				; Desired Position Limit Band
+I0443 = FLAG_ADDR4					; GAP[#4] LS reference (use J4)
+; I0443 = FLAG_ADDR8					; GAP[#4] LS reference (use J5)
+
+I0460 = SERVO_DELAY_CNT				; Servo Cycle Period Extension Period
+
+I0465 = 640							; Deadband Size [2013/05/11]
+I0466 = 6527
+I0467 = 4194304
+I0468 = SLIP_4_VAL					; Friction Feedforward
+I0469 = DAC_OUT_LMT					; Output Command Limit
+
+I0486 = BACK_RUSH_VAL				; Backlash Size
+
+I0490 = 1							; Rapid Mode Speed Select 1:use Ixx16 / 0:use Ixx22
+
+; I0496 = SRDY_INIT					; Command Output Mode Control (Amp-Enable)
+
+
+
+
+; --------------
+; Common Setting
+; --------------
+I3 = IO_HANDLING_VAL				; I/O Handshake Control
+I4 = IO_CHECKSUM_VAL				; Communications Integrity Mode
+I5 = PLC_RUN_VAL					; Use only PLC1<->31
+I6 = ERR_NOTICE_VAL					; Error Reporting Mode
+; I9 = LIST_VAL						; Full/Abbreviated Listing Control
+I35 = EMR_WD_VAL					; enable EMERGENCY-STOP & Watch Dog(0:disable)
+
+
+
+; -------------------
+;	encode mode
+;	3=X4 CW 7=X4 CCW
+; -------------------
+;; I7010 = 3		; Quadrature forward rotation (servo IC=0 CH=1)
+; I7010 = 7		; Quadrature invert rotation (servo IC=0 CH=1)[MOT(#1)](for 1.5m-IVU)
+; I7020 = 7		; Quadrature invert rotation (servo IC=0 CH=2)[MOT(#2)](for 1.5m-IVU)
+; I7030 = 7		; Quadrature invert rotation (servo IC=0 CH=3)[MOT(#3)](for 1.5m-IVU)
+; I7040 = 7		; Quadrature invert rotation (servo IC=0 CH=4)[MOT(#4)](for 1.5m-IVU)
+; I7110 = 7		; Quadrature invert rotation (servo IC=1 CH=1)[MOT(#5)](for 1.5m-IVU)
+I7010 = 3		; Quadrature invert rotation (servo IC=0 CH=1)[MOT(#1)](for 2.8m-IVU)
+I7020 = 3		; Quadrature invert rotation (servo IC=0 CH=2)[MOT(#2)](for 2.8m-IVU)
+I7030 = 3		; Quadrature invert rotation (servo IC=0 CH=3)[MOT(#3)](for 2.8m-IVU)
+I7040 = 3		; Quadrature invert rotation (servo IC=0 CH=4)[MOT(#4)](for 2.8m-IVU)
+
+; I7120 = 3		; Quadrature forward rotation (servo IC=1 CH=2)
+; I7130 = 3		; Quadrature forward rotation (servo IC=1 CH=3)
+; I7140 = 3		; Quadrature forward rotation (servo IC=1 CH=4)
+
+
+; -------------------
+;	DAC output mode
+;	DA output PFM
+; -------------------
+I7016 = 3		; DAC output (#1 servo IC=0 CH=1)
+I7026 = 3		; DAC output (#2 servo IC=0 CH=2)
+I7036 = 3		; DAC output (#3 servo IC=0 CH=3)
+I7046 = 3		; DAC output (#4 servo IC=0 CH=4)
+
+I7116 = 3		; DAC output (#5 servo IC=1 CH=3)
+I7126 = 3		; DAC output (#6 servo IC=1 CH=4)
+I7136 = 3		; DAC output (#7 servo IC=1 CH=3)
+I7146 = 3		; DAC output (#8 servo IC=1 CH=4)
+
+
+;I10 = 2516582	; Servo cycle
+I10 = 3713707	; Servo cycle (442us 3713707/8388607 msec)
+; I19 = 7007		; Clock sorce (use servo IC #0 I7007, default)
+
+; I52 = 11		; CPU-Clock[120MHz](for 2.8m)
+I52 = 7		; CPU-Clock[80MH](for 1.5m & 3.0m)
+

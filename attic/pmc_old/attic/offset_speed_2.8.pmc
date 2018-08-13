@@ -1,0 +1,45 @@
+; ----------------------------------------------------
+; 2.8m-IVU : Default value
+; ----------------------------------------------------
+
+#define		GAP_DEF_SPD			0.1			; GAP default speed (mm/sec)
+#define		JCK_DEF_SPD			0.1			; JACK default speed(mm/sec)
+#define		GAP_DEF_EVA			0			; GAP Evacuation 0:Disable 1:Enable
+
+
+; ------------------------------------------------
+; comment out (#3)
+; ------------------------------------------------
+; caution
+; seeing in save/auto_settings.sav as default data
+; ------------------------------------------------
+; ------------
+; (#1)[A13005]
+; ------------
+; #define		GAP1_OFFSET		71575842	; GAP OFFSET
+; #define		GAP2_OFFSET		68854227	; GAP OFFSET
+; #define		GAP3_OFFSET		69666335	; GAP OFFSET(Downstream)
+; #define		GAP4_OFFSET		72503948	; GAP OFFSET(Downstream)
+; #define		GAP5_OFFSET		0			; not used at 2.8m-IVU
+
+
+; ------------
+; (#2)[A13006]
+; ------------
+#define		GAP1_OFFSET		71579966	; GAP OFFSET
+#define		GAP2_OFFSET		70515466	; GAP OFFSET
+#define		GAP3_OFFSET		71168947	; GAP OFFSET(Downstream)
+#define		GAP4_OFFSET		72110316	; GAP OFFSET(Downstream)
+#define		GAP5_OFFSET		0			; not used at 2.8m-IVU
+
+
+; ------------
+; (#3)[A13004]
+; ------------
+; #define		GAP1_OFFSET		71261126	; GAP OFFSET
+; #define		GAP2_OFFSET		70572604	; GAP OFFSET
+; #define		GAP3_OFFSET		71943548	; GAP OFFSET(Downstream)
+; #define		GAP4_OFFSET		73152233	; GAP OFFSET(Downstream)
+; #define		GAP5_OFFSET		0			; not used at 2.8m-IVU
+
+
