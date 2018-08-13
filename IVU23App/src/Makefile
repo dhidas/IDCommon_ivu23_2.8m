@@ -14,6 +14,20 @@ DBD += IVU23.dbd
 
 # IVU23.dbd will be made up from these files:
 IVU23_DBD += base.dbd
+IVU23_DBD += asyn.dbd
+IVU23_DBD += motorSupport.dbd
+IVU23_DBD += drvAsynIPPort.dbd
+IVU23_DBD += drvAsynSerialPort.dbd
+IVU23_DBD += pmacAsynMotorPort.dbd
+IVU23_DBD += pmacAsynMotor.dbd
+IVU23_DBD += pmacAsynIPPort.dbd
+IVU23_DBD += pmacAsynCoord.dbd
+IVU23_DBD += asSupport.dbd
+IVU23_DBD += busySupport.dbd
+IVU23_DBD += calcSupport.dbd
+IVU23_DBD += system.dbd
+IVU23_DBD += stream.dbd
+IVU23_DBD += devIocStats.dbd
 
 # Include dbd files from all support applications:
 #IVU23_DBD += xxx.dbd
@@ -38,6 +52,19 @@ IVU23_SRCS_vxWorks += -nil-
 
 # Finally link to the EPICS Base libraries
 IVU23_LIBS += $(EPICS_BASE_IOC_LIBS)
+
+
+IVU23_LIBS += pmacAsynMotorPort
+IVU23_LIBS += pmacAsynIPPort
+IVU23_LIBS += pmacAsynCoord
+IVU23_LIBS += motor
+IVU23_LIBS += asyn
+IVU23_LIBS += autosave
+IVU23_LIBS += busy
+IVU23_LIBS += calc
+IVU23_LIBS += stream
+IVU23_LIBS += devIocStats
+IVU23_LIBS += pmacAsynMotor
 
 #===========================
 

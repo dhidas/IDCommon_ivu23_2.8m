@@ -3,6 +3,13 @@
 ## You may have to change IVU23 to something else
 ## everywhere it appears in this file
 
+epicsEnvSet("ENGINEER", "Dean Andrew Hidas is not an engineer. <dhidas@bnl.gov>")
+epicsEnvSet("PMACUTIL", "/usr/share/epics-pmacutil-dev")
+epicsEnvSet("PMAC1_IP", "192.168.1.103:1025")
+epicsEnvSet("sys", "ID")
+epicsEnvSet("dev", "IVU23:1")
+epicsEnvSet("STREAM_PROTOCOL_PATH", "/usr/share/epics-pmacutil-dev/protocol")
+
 #< envPaths
 
 ## Register all support components
@@ -19,6 +26,17 @@ set_savefile_path("../../as","/save")
 set_requestfile_path("../../as","/req")
 set_pass0_restoreFile("ioc_settings.sav")
 set_pass1_restoreFile("ioc_waveforms.sav")
+
+# Configure ports
+pmacAsynIPConfigure("P0", $(PMAC1_IP))
+#pmacCreateController("PMAC1", "P0", 0, 9, 50, 500)
+
+# Set Idle and Moving poll periods (CS_Ref, PeriodMilliSeconds)
+#pmacSetCoordIdlePollPeriod(0, 500)
+#pmacSetCoordMovingPollPeriod(0, 100)
+
+dbLoadRecords("../../db/asynRecord.db","P=$(sys),R={$(dev)}Asyn,ADDR=1,PORT=P0,IMAX=128,OMAX=128")
+
 
 iocInit()
 

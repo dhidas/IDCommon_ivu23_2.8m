@@ -13,6 +13,8 @@ include $(TOP)/configure/CONFIG
 #DB += xxx.db
 DB += IVU23.db
 
+DB_INSTALLS += $(EPICS_BASE)/db/asynRecord.db
+
 ifneq ($(AUTOSAVE),)
 DB_INSTALLS += $(AUTOSAVE)/db/save_restoreStatus.db
 endif
