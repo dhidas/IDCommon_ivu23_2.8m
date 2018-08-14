@@ -1,0 +1,42 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Startup PLC
+;   Init encoders, other PLCs as needed
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+Open PLC 1 Clear
+
+Disable PLC0
+Disable PLCC0
+Disable PLC2..31
+Disable PLCC2..31
+
+; Kill al motors
+CMD^K
+
+; Setup linear encoders
+; These are the biss global settings for each IC
+; 250kHz/Servo-Clock/down-edge/40us-Delay/BiSS
+#define BISS_GLOBAL_CONTROL_WORD $63232B
+; Prefer
+; #define BISS_GLOBAL_CONTROL_WORD $63220B
+CMD"WX:$078B2F,BISS_GLOBAL_CONTROL_WORD" ; Biss global ch 1-4
+CMD"WX:$078B3F,BISS_GLOBAL_CONTROL_WORD" ; Biss global ch 5-8
+
+; CRC=X4+X1+1/BiSS-C/Continuous trig/trigger-enable/SENC/32bit
+#define BISS_CHAN_CONTROL_WORD $091420
+; Prefer
+; #define BISS_CHAN_CONTROL_WORD $2114A0
+CMD"WX:$078B20,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B24,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B28,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B2C,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B30,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B34,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B38,BISS_CHAN_CONTROL_WORD"
+CMD"WX:$078B3C,BISS_CHAN_CONTROL_WORD"
+
+
+
+
+
+Close
