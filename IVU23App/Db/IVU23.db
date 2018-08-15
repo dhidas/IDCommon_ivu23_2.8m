@@ -7,3 +7,201 @@ record(ao, "$(SYS)$(DEV)Test")
     info(autosaveFields_pass0, "VAL")
 }
 
+record(ai, "$(SYS){$(DEV)}P100") {
+  field(DTYP, "stream")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getVar(P100) $(PORT)")
+}
+
+record(ao, "$(SYS){$(DEV)}P100-SP") {
+  field(DTYP, "stream")
+  field(PROC, 1)
+  field(OUT, "@pmac.proto setVar(P100) $(PORT)")
+}
+
+record(ai, "$(SYS){$(DEV)}P101") {
+  field(DTYP, "asynFloat64")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(P101)")
+}
+record(ao, "$(SYS){$(DEV)}P101-SP") {
+  field(DTYP, "asynFloat64")
+  field(OUT, "@asyn($(PORT))var(P101)")
+}
+
+
+
+
+record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:PLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Positive Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M121)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:MLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Negative Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M122)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:PLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Positive Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M221)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:MLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Negative Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M222)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:PLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Positive Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M321)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:MLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Negative Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M322)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:PLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Positive Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M421)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:MLim-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Negative Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M422)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+
+
+
+
+
+record(bi, "$(SYS){$(DEV)-Ax:T}Sw:OKill-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Open Kill Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M17)")
+  field(ZNAM, "KillSw inactive")
+  field(ONAM, "KillSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:T}Sw:CKill-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Closed Kill Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M18)")
+  field(ZNAM, "KillSw inactive")
+  field(ONAM, "KillSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:Gap}Sw:CKill-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Closed Kill Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M19)")
+  field(ZNAM, "KillSw inactive")
+  field(ONAM, "KillSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:B}Sw:CKill-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Closed Kill Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M20)")
+  field(ZNAM, "KillSw inactive")
+  field(ONAM, "KillSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:B}Sw:OKill-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Open Kill Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M21)")
+  field(ZNAM, "KillSw inactive")
+  field(ONAM, "KillSw active")
+  field(OSV, "MAJOR")
+}
+
+
+
+record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:Home-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Home Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M120)")
+  field(ZNAM, "HomeSw inactive")
+  field(ONAM, "HomeSw active")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:Home-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Home Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M220)")
+  field(ZNAM, "HomeSw inactive")
+  field(ONAM, "HomeSw active")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:Home-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Home Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M320)")
+  field(ZNAM, "HomeSw inactive")
+  field(ONAM, "HomeSw active")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:Home-Sts") {
+  field(DTYP, "asynInt32")
+  field(DESC, "Home Switch")
+  field(SCAN, "1 second")
+  field(INP, "@asyn($(PORT))var(M420)")
+  field(ZNAM, "HomeSw inactive")
+  field(ONAM, "HomeSw active")
+}
+
