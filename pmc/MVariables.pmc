@@ -17,29 +17,40 @@ M15->Y:$78400,15
 M16->Y:$78400,16
 
 ; The Following commented out were changed by neomax
-; M17->Y:$78400,17  ; (Suggested)
-; M18->Y:$78400,18  ; (Suggested)
-; M19->Y:$78400,19  ; (Suggested)
-; M20->Y:$78400,20  ; (Suggested)
-; M21->Y:$78400,21  ; (Suggested)
+; M17->Y:$78400,17  ; I/O17 Data Line; J3 Pin 18
+; M18->Y:$78400,18  ; I/O18 Data Line; J3 Pin 19
+; M19->Y:$78400,19  ; I/O19 Data Line; J3 Pin 20
+; M20->Y:$78400,20  ; I/O20 Data Line; J3 Pin 21
+; M21->Y:$78400,21  ; I/O21 Data Line; J3 Pin 22
+; M22->Y:$78400,22  ; I/O22 Data Line; J3 Pin 23
+; M23->Y:$78400,23  ; I/O23 Data Line; J3 Pin 24
+; M24->Y:$78401,0   ; I/O24 Data Line; J3 Pin 25
+; M25->Y:$78401,1   ; I/O25 Data Line; J3 Pin 26
+; M26->Y:$78401,2   ; I/O26 Data Line; J3 Pin 27
+; M27->Y:$78401,3   ; I/O27 Data Line; J3 Pin 28
+; M28->Y:$78401,4   ; I/O28 Data Line; J3 Pin 29
+; M29->Y:$78401,5   ; I/O29 Data Line; J3 Pin 30
+; M30->Y:$78401,6   ; I/O30 Data Line; J3 Pin 31
+; M31->Y:$78401,7   ; I/O31 Data Line; J3 Pin 32
+; M32->X:$78400,0,8 ; Direction control for I/O00 to I/O07
 
 M17->Y:$078803,0,1   ; INPUT CH 17(J7-1)    Kill Top Open
 M18->Y:$078803,1,1   ; INPUT CH 18(J7-20)   Kill Top Close
 M19->Y:$078803,2,1   ; INPUT CH 19(J7-2)    Kill Gap Close
 M20->Y:$078803,3,1   ; INPUT CH 20(J7-21)   Kill Bottom Close
 M21->Y:$078803,4,1   ; INPUT CH 21(J7-3)    Kill Bottom Open
+M22->Y:$078803,5,1   ; INPUT CH 21(J7-22)   Limit Top Close
+M23->Y:$078803,6,1   ; INPUT CH 21(J7-4)    Limit Gap Close
+M24->Y:$078803,7,1   ; INPUT CH 21(J7-23)   Limit Bottom Close
+M25->Y:$078804,0,1   ; INPUT CH 25(J7-5)    
+M26->Y:$078804,1,1   ; INPUT CH 26(J7-24)   
+M27->Y:$078804,2,1   ; INPUT CH 27(J7-6)    
+M28->Y:$078804,3,1   ; INPUT CH 28(J7-25)   
+M29->Y:$078804,4,1   ; INPUT CH 29(J7-7)    
+M30->Y:$078804,5,1   ; INPUT CH 30(J7-26)   
+M31->Y:$078804,6,1   ; INPUT CH 31(J7-8)    
+M32->Y:$078804,7,1   ; INPUT CH 32(J7-27)   E-Stop
 
-M22->Y:$78400,22
-M23->Y:$78400,23
-M24->Y:$78401,0
-M25->Y:$78401,1
-M26->Y:$78401,2
-M27->Y:$78401,3
-M28->Y:$78401,4
-M29->Y:$78401,5
-M30->Y:$78401,6
-M31->Y:$78401,7
-M32->X:$78400,0,8
 M33->Y:$70800,0
 M34->X:$78400,8,8
 M35->Y:$70800,1
