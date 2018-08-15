@@ -16,8 +16,13 @@ epicsEnvSet("STREAM_PROTOCOL_PATH", "/usr/share/epics-pmacutil-dev/protocol")
 dbLoadDatabase("../../dbd/IVU23.dbd",0,0)
 IVU23_registerRecordDeviceDriver(pdbbase) 
 
+
+# Configure ports
+pmacAsynIPConfigure("P0", $(PMAC1_IP))
+pmacCreateController("PMAC1", "P0", 0, 9, 50, 500)
+
 ## Load record instances
-dbLoadRecords("../../db/IVU23.db","SYS=ID,DEV=IVU23:1")
+dbLoadRecords("../../db/IVU23.db","SYS=ID,DEV=IVU23:1,PORT=P0")
 
 
 
@@ -27,9 +32,6 @@ set_requestfile_path("../../as","/req")
 set_pass0_restoreFile("ioc_settings.sav")
 set_pass1_restoreFile("ioc_waveforms.sav")
 
-# Configure ports
-pmacAsynIPConfigure("P0", $(PMAC1_IP))
-#pmacCreateController("PMAC1", "P0", 0, 9, 50, 500)
 
 # Set Idle and Moving poll periods (CS_Ref, PeriodMilliSeconds)
 #pmacSetCoordIdlePollPeriod(0, 500)
