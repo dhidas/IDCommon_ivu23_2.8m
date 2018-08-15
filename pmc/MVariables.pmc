@@ -1,72 +1,120 @@
-M0->Y:$78400,0
-M1->Y:$78400,1
-M2->Y:$78400,2
-M3->Y:$78400,3
-M4->Y:$78400,4
-M5->Y:$78400,5
-M6->Y:$78400,6
-M7->Y:$78400,7
-M8->Y:$78400,8
-M9->Y:$78400,9
-M10->Y:$78400,10
-M11->Y:$78400,11
-M12->Y:$78400,12
-M13->Y:$78400,13
-M14->Y:$78400,14
-M15->Y:$78400,15
-M16->Y:$78400,16
+CLOSE                 ; Make sure no buffer is open
+M0..8191->*           ; All M-variables are now self-referenced
 
-; The Following commented out were changed by neomax
-; M17->Y:$78400,17  ; I/O17 Data Line; J3 Pin 18
-; M18->Y:$78400,18  ; I/O18 Data Line; J3 Pin 19
-; M19->Y:$78400,19  ; I/O19 Data Line; J3 Pin 20
-; M20->Y:$78400,20  ; I/O20 Data Line; J3 Pin 21
-; M21->Y:$78400,21  ; I/O21 Data Line; J3 Pin 22
-; M22->Y:$78400,22  ; I/O22 Data Line; J3 Pin 23
-; M23->Y:$78400,23  ; I/O23 Data Line; J3 Pin 24
-; M24->Y:$78401,0   ; I/O24 Data Line; J3 Pin 25
-; M25->Y:$78401,1   ; I/O25 Data Line; J3 Pin 26
-; M26->Y:$78401,2   ; I/O26 Data Line; J3 Pin 27
-; M27->Y:$78401,3   ; I/O27 Data Line; J3 Pin 28
-; M28->Y:$78401,4   ; I/O28 Data Line; J3 Pin 29
-; M29->Y:$78401,5   ; I/O29 Data Line; J3 Pin 30
-; M30->Y:$78401,6   ; I/O30 Data Line; J3 Pin 31
-; M31->Y:$78401,7   ; I/O31 Data Line; J3 Pin 32
-; M32->X:$78400,0,8 ; Direction control for I/O00 to I/O07
 
-M17->Y:$078803,0,1   ; INPUT CH 17(J7-1)    Kill Top Open
-M18->Y:$078803,1,1   ; INPUT CH 18(J7-20)   Kill Top Close
-M19->Y:$078803,2,1   ; INPUT CH 19(J7-2)    Kill Gap Close
-M20->Y:$078803,3,1   ; INPUT CH 20(J7-21)   Kill Bottom Close
-M21->Y:$078803,4,1   ; INPUT CH 21(J7-3)    Kill Bottom Open
-M22->Y:$078803,5,1   ; INPUT CH 21(J7-22)   Limit Top Close
-M23->Y:$078803,6,1   ; INPUT CH 21(J7-4)    Limit Gap Close
-M24->Y:$078803,7,1   ; INPUT CH 21(J7-23)   Limit Bottom Close
-M25->Y:$078804,0,1   ; INPUT CH 25(J7-5)    
-M26->Y:$078804,1,1   ; INPUT CH 26(J7-24)   
-M27->Y:$078804,2,1   ; INPUT CH 27(J7-6)    
-M28->Y:$078804,3,1   ; INPUT CH 28(J7-25)   
-M29->Y:$078804,4,1   ; INPUT CH 29(J7-7)    
-M30->Y:$078804,5,1   ; INPUT CH 30(J7-26)   
-M31->Y:$078804,6,1   ; INPUT CH 31(J7-8)    
-M32->Y:$078804,7,1   ; INPUT CH 32(J7-27)   E-Stop
+M0->Y:$78400,0        ; I/O00 Data Line; J3 Pin 1
 
-M33->Y:$70800,0
-M34->X:$78400,8,8
-M35->Y:$70800,1
-M36->X:$78400,16,8
-M37->Y:$70800,2
-M38->X:$78401,0,8
-M39->Y:$70800,3
-M40->Y:$78402,8
-M41->Y:$78402,9
-M42->Y:$78402,10
-M43->Y:$78402,11
-M44->Y:$78402,12
-M45->Y:$78402,13
-M46->Y:$78402,14
-M47->Y:$78402,15
-M48->Y:$78402,8,8
+; The following are changed because of additional IO per the HRM
+; M1->Y:$78400,1      ; I/O00 Data Line; J3 Pin 2
+; M2->Y:$78400,2      ; I/O00 Data Line; J3 Pin 3
+; M3->Y:$78400,3      ; I/O00 Data Line; J3 Pin 4
+; M4->Y:$78400,4      ; I/O00 Data Line; J3 Pin 5
+; M5->Y:$78400,5      ; I/O00 Data Line; J3 Pin 6
+; M6->Y:$78400,6      ; I/O00 Data Line; J3 Pin 7
+; M7->Y:$78400,7      ; I/O00 Data Line; J3 Pin 8
+; M8->Y:$78400,8      ; I/O00 Data Line; J3 Pin 9
+; M9->Y:$78400,9      ; I/O00 Data Line; J3 Pin 10
+; M10->Y:$78400,10    ; I/O00 Data Line; J3 Pin 11
+; M11->Y:$78400,11    ; I/O00 Data Line; J3 Pin 12
+; M12->Y:$78400,12    ; I/O00 Data Line; J3 Pin 13
+; M13->Y:$78400,13    ; I/O00 Data Line; J3 Pin 14
+; M14->Y:$78400,14    ; I/O00 Data Line; J3 Pin 15
+; M15->Y:$78400,15    ; I/O00 Data Line; J3 Pin 16
+; M16->Y:$78400,16    ; I/O00 Data Line; J3 Pin 17
+; M17->Y:$78400,17    ; I/O17 Data Line; J3 Pin 18
+; M18->Y:$78400,18    ; I/O18 Data Line; J3 Pin 19
+; M19->Y:$78400,19    ; I/O19 Data Line; J3 Pin 20
+; M20->Y:$78400,20    ; I/O20 Data Line; J3 Pin 21
+; M21->Y:$78400,21    ; I/O21 Data Line; J3 Pin 22
+; M22->Y:$78400,22    ; I/O22 Data Line; J3 Pin 23
+; M23->Y:$78400,23    ; I/O23 Data Line; J3 Pin 24
+; M24->Y:$78401,0     ; I/O24 Data Line; J3 Pin 25
+; M25->Y:$78401,1     ; I/O25 Data Line; J3 Pin 26
+; M26->Y:$78401,2     ; I/O26 Data Line; J3 Pin 27
+; M27->Y:$78401,3     ; I/O27 Data Line; J3 Pin 28
+; M28->Y:$78401,4     ; I/O28 Data Line; J3 Pin 29
+; M29->Y:$78401,5     ; I/O29 Data Line; J3 Pin 30
+; M30->Y:$78401,6     ; I/O30 Data Line; J3 Pin 31
+; M31->Y:$78401,7     ; I/O31 Data Line; J3 Pin 32
+; M32->X:$78400,0,8   ; Direction control for I/O00 to I/O07
+; M33->Y:$70800,0     ; Buffer direction control for I/O00 to I/O07
+; M34->X:$78400,8,8   ; Direction control for I/O08 to I/O15
+; M35->Y:$70800,1     ; Buffer direction control for I/O08 to I/O15
+; M36->X:$78400,16,8  ; Direction control for I/O16 to I/O23
+; M37->Y:$70800,2     ; Buffer direction control for I/O16 to I/O23
+; M38->X:$78401,0,8   ; Direction control for I/O24 to I/O31
+; M39->Y:$70800,3     ; Buffer direction control for I/O24 to I/O31
+; M40->Y:$78402,8     ; SEL0 Line; J2 Pin 4
+; M41->Y:$78402,9     ; SEL1 Line; J2 Pin 6
+; M42->Y:$78402,10    ; SEL2 Line; J2 Pin 8
+; M43->Y:$78402,11    ; SEL3 Line; J2 Pin 10
+; M44->Y:$78402,12    ; SEL4 Line; J2 Pin 12
+; M45->Y:$78402,13    ; SEL5 Line; J2 Pin 14
+; M46->Y:$78402,14    ; SEL6 Line; J2 Pin 16
+; M47->Y:$78402,15    ; SEL7 Line; J2 Pin 18
+; M48->Y:$78402,8,8   ; SEL0-7 Lines treated as a byte
+
+; HRM: General Purpose I/Os (J6) Suggested M-Variables
+; Inputs:
+M1->Y:$78800,0,1      ; Input 01 J6 Pin#1
+M2->Y:$78800,1,1      ; Input 02 J6 Pin#20
+M3->Y:$78800,2,1      ; Input 03 J6 Pin#2
+M4->Y:$78800,3,1      ; Input 04 J6 Pin#21
+M5->Y:$78800,4,1      ; Input 05 J6 Pin#3
+M6->Y:$78800,5,1      ; Input 06 J6 Pin#22
+M7->Y:$78800,6,1      ; Input 07 J6 Pin#4
+M8->Y:$78800,7,1      ; Input 08 J6 Pin#23
+M9->Y:$78801,0,1      ; Input 09 J6 Pin#5
+M10->Y:$78801,1,1     ; Input 10 J6 Pin#24
+M11->Y:$78801,2,1     ; Input 11 J6 Pin#6
+M12->Y:$78801,3,1     ; Input 12 J6 Pin#25
+M13->Y:$78801,4,1     ; Input 13 J6 Pin#7
+M14->Y:$78801,5,1     ; Input 14 J6 Pin#26
+M15->Y:$78801,6,1     ; Input 15 J6 Pin#8
+M16->Y:$78801,7,1     ; Input 16 J6 Pin#27
+
+; HRM: General Purpose I/Os Additional (J7) Suggested M-Variables
+; Inputs:
+M17->Y:$78803,0,1     ; Input 17 J7 Pin#1     // Kill Top Open
+M18->Y:$78803,1,1     ; Input 18 J7 Pin#20    // Kill Top Close
+M19->Y:$78803,2,1     ; Input 19 J7 Pint#2    // Kill Gap Close
+M20->Y:$78803,3,1     ; Input 20 J7 Pin#21    // Kill Bottom Close
+M21->Y:$78803,4,1     ; Input 21 J7 Pin#3     // Kill Bottom Open
+M22->Y:$78803,5,1     ; Input 22 J7 Pin#22    // Limit Top Close
+M23->Y:$78803,6,1     ; Input 23 J7 Pin#4     // Limit Gap Close
+M24->Y:$78803,7,1     ; Input 24 J7 Pin#23    // Limit Bottom Close
+M25->Y:$78804,0,1     ; Input 25 J7 Pin#5
+M26->Y:$78804,1,1     ; Input 26 J7 Pin#24
+M27->Y:$78804,2,1     ; Input 27 J7 Pin#6
+M28->Y:$78804,3,1     ; Input 28 J7 Pin#25
+M29->Y:$78804,4,1     ; Input 29 J7 Pin#7
+M30->Y:$78804,5,1     ; Input 30 J7 Pin#26
+M31->Y:$78804,6,1     ; Input 31 J7 Pin#8
+M32->Y:$78804,7,1     ; Input 32 J7 Pin#27    // E-Stop
+
+; HRM: General Purpose I/Os (J6) Suggested M-Variables
+; Outputs:              Output#       Sourcing  Sinking
+M33->Y:$078802,0,1    ; Output 1 J6   Pin#12    Pin#30
+M34->Y:$078802,1,1    ; Output 2 J6   Pin#13    Pin#31
+M35->Y:$078802,2,1    ; Output 3 J6   Pin#14    Pin#32
+M36->Y:$078802,3,1    ; Output 4 J6   Pin#15    Pin#33
+M37->Y:$078802,4,1    ; Output 5 J6   Pin#16    Pin#34
+M38->Y:$078802,5,1    ; Output 6 J6   Pin#17    Pin#35
+M39->Y:$078802,6,1    ; Output 7 J6   Pin#18    Pin#36
+M40->Y:$078802,7,1    ; Output 8 J6   Pin#19    Pin#37
+
+; HRM: General Purpose I/Os Additional (J7) Suggested M-Variables
+; Outputs:              Output#       Sourcing  Sinking
+M41->Y:$078805,0,1    ; Output 09 J7  Pin#12    Pin#30
+M42->Y:$078805,1,1    ; Output 10 J7  Pin#13    Pin#31
+M43->Y:$078805,2,1    ; Output 11 J7  Pin#14    Pin#32
+M44->Y:$078805,3,1    ; Output 12 J7  Pin#15    Pin#33
+M45->Y:$078805,4,1    ; Output 13 J7  Pin#16    Pin#34
+M46->Y:$078805,5,1    ; Output 14 J7  Pin#17    Pin#35
+M47->Y:$078805,6,1    ; Output 15 J7  Pin#18    Pin#36
+M48->Y:$078805,7,1    ; Output 16 J7  Pin#19    Pin#37
+
+
 M49->*
 M50->Y:$78402,0
 M51->Y:$78402,1
@@ -141,7 +189,7 @@ M119->X:$78000,14
 M120->X:$78000,16         ; HMFL1 flag input status (TD)
 M121->X:$78000,17         ; PLIM1 flag input status (TD)
 M122->X:$78000,18         ; MLIM1 flag input status (TD)
-M123->X:$78000,15
+M123->X:$78000,15         ; FAULT1 flag input status (TD)
 M124->X:$78000,20
 M125->X:$78000,21
 M126->X:$78000,22
@@ -241,7 +289,7 @@ M219->X:$78008,14
 M220->X:$78008,16         ; HMFL2 flag input status (TU)
 M221->X:$78008,17         ; PLIM2 flag input status (TU)
 M222->X:$78008,18         ; MLIM2 flag input status (TU)
-M223->X:$78008,15
+M223->X:$78008,15         ; FAULT2 flag input status (TU)
 M224->X:$78008,20
 M225->X:$78008,21
 M226->X:$78008,22
@@ -341,7 +389,7 @@ M319->X:$78010,14
 M320->X:$78010,16         ; HMFL3 flag input status (BD)
 M321->X:$78010,17         ; PLIM3 flag input status (BD)
 M322->X:$78010,18         ; MLIM3 flag input status (BD)
-M323->X:$78010,15
+M323->X:$78010,15         ; FAULT3 flag input status (BD)
 M324->X:$78010,20
 M325->X:$78010,21
 M326->X:$78010,22
@@ -441,7 +489,7 @@ M419->X:$78018,14
 M420->X:$78018,16         ; HMFL4 flag input status (BU)
 M421->X:$78018,17         ; PLIM4 flag input status (BU)
 M422->X:$78018,18         ; MLIM4 flag input status (BU)
-M423->X:$78018,15
+M423->X:$78018,15         ; FAULT4 flag input status (BU)
 M424->X:$78018,20
 M425->X:$78018,21
 M426->X:$78018,22
