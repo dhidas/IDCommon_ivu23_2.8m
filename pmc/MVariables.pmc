@@ -15,11 +15,20 @@ M13->Y:$78400,13
 M14->Y:$78400,14
 M15->Y:$78400,15
 M16->Y:$78400,16
-M17->Y:$78400,17
-M18->Y:$78400,18
-M19->Y:$78400,19
-M20->Y:$78400,20
-M21->Y:$78400,21
+
+; The Following commented out were changed by neomax
+; M17->Y:$78400,17  ; (Suggested)
+; M18->Y:$78400,18  ; (Suggested)
+; M19->Y:$78400,19  ; (Suggested)
+; M20->Y:$78400,20  ; (Suggested)
+; M21->Y:$78400,21  ; (Suggested)
+
+M17->Y:$078803,0,1   ; INPUT CH 17(J7-1)    Kill Top Open
+M18->Y:$078803,1,1   ; INPUT CH 18(J7-20)   Kill Top Close
+M19->Y:$078803,2,1   ; INPUT CH 19(J7-2)    Kill Gap Close
+M20->Y:$078803,3,1   ; INPUT CH 20(J7-21)   Kill Bottom Close
+M21->Y:$078803,4,1   ; INPUT CH 21(J7-3)    Kill Bottom Open
+
 M22->Y:$78400,22
 M23->Y:$78400,23
 M24->Y:$78401,0
@@ -118,9 +127,9 @@ M116->X:$78000,9
 M117->X:$78000,11
 M118->X:$78000,8
 M119->X:$78000,14
-M120->X:$78000,16
-M121->X:$78000,17
-M122->X:$78000,18
+M120->X:$78000,16         ; HMFL1 flag input status (TD)
+M121->X:$78000,17         ; PLIM1 flag input status (TD)
+M122->X:$78000,18         ; MLIM1 flag input status (TD)
 M123->X:$78000,15
 M124->X:$78000,20
 M125->X:$78000,21
@@ -218,9 +227,9 @@ M216->X:$78008,9
 M217->X:$78008,11
 M218->X:$78008,8
 M219->X:$78008,14
-M220->X:$78008,16
-M221->X:$78008,17
-M222->X:$78008,18
+M220->X:$78008,16         ; HMFL2 flag input status (TU)
+M221->X:$78008,17         ; PLIM2 flag input status (TU)
+M222->X:$78008,18         ; MLIM2 flag input status (TU)
 M223->X:$78008,15
 M224->X:$78008,20
 M225->X:$78008,21
@@ -318,9 +327,9 @@ M316->X:$78010,9
 M317->X:$78010,11
 M318->X:$78010,8
 M319->X:$78010,14
-M320->X:$78010,16
-M321->X:$78010,17
-M322->X:$78010,18
+M320->X:$78010,16         ; HMFL3 flag input status (BD)
+M321->X:$78010,17         ; PLIM3 flag input status (BD)
+M322->X:$78010,18         ; MLIM3 flag input status (BD)
 M323->X:$78010,15
 M324->X:$78010,20
 M325->X:$78010,21
@@ -418,9 +427,9 @@ M416->X:$78018,9
 M417->X:$78018,11
 M418->X:$78018,8
 M419->X:$78018,14
-M420->X:$78018,16
-M421->X:$78018,17
-M422->X:$78018,18
+M420->X:$78018,16         ; HMFL4 flag input status (BU)
+M421->X:$78018,17         ; PLIM4 flag input status (BU)
+M422->X:$78018,18         ; MLIM4 flag input status (BU)
 M423->X:$78018,15
 M424->X:$78018,20
 M425->X:$78018,21
