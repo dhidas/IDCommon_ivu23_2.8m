@@ -1,34 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <display typeId="org.csstudio.opibuilder.Display" version="1.0.0">
-  <actions hook="false" hook_all="false" />
+  <show_close_button>true</show_close_button>
+  <rules />
+  <wuid>-6026004c:165435db822:-8000</wuid>
+  <show_grid>true</show_grid>
+  <auto_zoom_to_fit_all>false</auto_zoom_to_fit_all>
+  <scripts />
+  <height>600</height>
+  <macros>
+    <include_parent_macros>true</include_parent_macros>
+    <SYS>ID</SYS>
+    <DEV>IVU23:1</DEV>
+  </macros>
+  <boy_version>4.0.103.201507142027</boy_version>
+  <show_edit_range>true</show_edit_range>
+  <widget_type>Display</widget_type>
   <auto_scale_widgets>
     <auto_scale_widgets>false</auto_scale_widgets>
     <min_width>-1</min_width>
     <min_height>-1</min_height>
   </auto_scale_widgets>
-  <auto_zoom_to_fit_all>false</auto_zoom_to_fit_all>
   <background_color>
     <color red="240" green="240" blue="240" />
   </background_color>
-  <boy_version>5.1.0.201706291447</boy_version>
+  <width>800</width>
+  <x>-1</x>
+  <name></name>
+  <grid_space>6</grid_space>
+  <show_ruler>true</show_ruler>
+  <y>-1</y>
+  <snap_to_geometry>true</snap_to_geometry>
   <foreground_color>
     <color red="192" green="192" blue="192" />
   </foreground_color>
-  <grid_space>6</grid_space>
-  <height>600</height>
-  <macros>
-    <include_parent_macros>true</include_parent_macros>
-  </macros>
-  <name></name>
-  <rules />
-  <scripts />
-  <show_close_button>true</show_close_button>
-  <show_edit_range>true</show_edit_range>
-  <show_grid>true</show_grid>
-  <show_ruler>true</show_ruler>
-  <snap_to_geometry>true</snap_to_geometry>
-  <widget_type>Display</widget_type>
-  <width>800</width>
-  <wuid>-6026004c:165435db822:-8000</wuid>
-  <x>-1</x>
-  <y>-1</y>
+  <actions hook="false" hook_all="false" />
+  <widget typeId="org.csstudio.opibuilder.widgets.Label" version="1.0.0">
+    <border_style>0</border_style>
+    <tooltip></tooltip>
+    <horizontal_alignment>1</horizontal_alignment>
+    <rules />
+    <enabled>true</enabled>
+    <wuid>4df007e6:16543bccb17:-7feb</wuid>
+    <transparent>true</transparent>
+    <auto_size>false</auto_size>
+    <text>IVU23 $(SYS){$(DEV)}</text>
+    <scripts />
+    <height>44</height>
+    <border_width>1</border_width>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <visible>true</visible>
+    <vertical_alignment>1</vertical_alignment>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>Label</widget_type>
+    <wrap_words>false</wrap_words>
+    <background_color>
+      <color red="255" green="255" blue="255" />
+    </background_color>
+    <width>211</width>
+    <x>234</x>
+    <name>Label</name>
+    <y>17</y>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <actions hook="false" hook_all="false" />
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.TextInput" version="2.0.0">
+    <alarm_pulsing>false</alarm_pulsing>
+    <precision>0</precision>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <horizontal_alignment>0</horizontal_alignment>
+    <rules />
+    <pv_value />
+    <auto_size>false</auto_size>
+    <text></text>
+    <rotation_angle>0.0</rotation_angle>
+    <show_units>true</show_units>
+    <height>25</height>
+    <multiline_input>false</multiline_input>
+    <border_width>1</border_width>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)}Asyn.AOUT</pv_name>
+    <selector_type>0</selector_type>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <precision_from_pv>true</precision_from_pv>
+    <widget_type>Text Input</widget_type>
+    <confirm_message></confirm_message>
+    <name>Text Input</name>
+    <style>0</style>
+    <actions hook="false" hook_all="false" />
+    <border_style>3</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <enabled>true</enabled>
+    <wuid>4df007e6:16543bccb17:-7fd8</wuid>
+    <transparent>false</transparent>
+    <scripts />
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <format_type>0</format_type>
+    <limits_from_pv>false</limits_from_pv>
+    <background_color>
+      <color red="255" green="255" blue="255" />
+    </background_color>
+    <width>100</width>
+    <x>558</x>
+    <y>527</y>
+    <maximum>1.7976931348623157E308</maximum>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <minimum>-1.7976931348623157E308</minimum>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <alarm_pulsing>false</alarm_pulsing>
+    <precision>0</precision>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <horizontal_alignment>0</horizontal_alignment>
+    <rules />
+    <enabled>true</enabled>
+    <wuid>4df007e6:16543bccb17:-7fca</wuid>
+    <transparent>false</transparent>
+    <pv_value />
+    <auto_size>false</auto_size>
+    <text>######</text>
+    <rotation_angle>0.0</rotation_angle>
+    <scripts />
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <show_units>true</show_units>
+    <height>20</height>
+    <border_width>1</border_width>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)}Asyn.AINP</pv_name>
+    <vertical_alignment>1</vertical_alignment>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <precision_from_pv>true</precision_from_pv>
+    <widget_type>Text Update</widget_type>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <wrap_words>false</wrap_words>
+    <format_type>0</format_type>
+    <background_color>
+      <color red="255" green="255" blue="255" />
+    </background_color>
+    <width>100</width>
+    <x>666</x>
+    <name>Text Update</name>
+    <y>530</y>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <actions hook="false" hook_all="false" />
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <rules />
+    <effect_3d>true</effect_3d>
+    <bit>-1</bit>
+    <pv_value />
+    <height>20</height>
+    <border_width>1</border_width>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:BD}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>LED</widget_type>
+    <name>LED</name>
+    <actions hook="false" hook_all="false" />
+    <show_boolean_label>false</show_boolean_label>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <enabled>true</enabled>
+    <wuid>-75f4894:165442bf9ca:-7ff1</wuid>
+    <on_color>
+      <color red="0" green="255" blue="0" />
+    </on_color>
+    <scripts />
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <on_label>ON</on_label>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>true</keep_wh_ratio>
+    </scale_options>
+    <off_color>
+      <color red="0" green="100" blue="0" />
+    </off_color>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <square_led>false</square_led>
+    <width>20</width>
+    <x>68</x>
+    <data_type>0</data_type>
+    <y>147</y>
+    <foreground_color>
+      <color red="192" green="192" blue="192" />
+    </foreground_color>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+    <off_label>OFF</off_label>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+    <toggle_button>false</toggle_button>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <push_action_index>0</push_action_index>
+    <rules />
+    <enabled>true</enabled>
+    <wuid>-75f4894:165442bf9ca:-7fe2</wuid>
+    <pv_value />
+    <text>Reset Alarm BD</text>
+    <scripts />
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <height>25</height>
+    <border_width>1</border_width>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <image></image>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:BD}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>Action Button</widget_type>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <width>127</width>
+    <x>96</x>
+    <name>Action Button</name>
+    <y>144</y>
+    <style>0</style>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <actions hook="false" hook_all="false">
+      <action type="WRITE_PV">
+        <pv_name>$(pv_name)</pv_name>
+        <value>1</value>
+        <timeout>10</timeout>
+        <confirm_message></confirm_message>
+        <description></description>
+      </action>
+    </actions>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <rules />
+    <effect_3d>true</effect_3d>
+    <bit>-1</bit>
+    <pv_value />
+    <height>20</height>
+    <border_width>1</border_width>
+    <visible>true</visible>
+    <pv_name></pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>LED</widget_type>
+    <name>LED_1</name>
+    <actions hook="false" hook_all="false" />
+    <show_boolean_label>false</show_boolean_label>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <enabled>true</enabled>
+    <wuid>-535423d8:165443c4aaf:-7feb</wuid>
+    <on_color>
+      <color red="0" green="255" blue="0" />
+    </on_color>
+    <scripts />
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <on_label>ON</on_label>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>true</keep_wh_ratio>
+    </scale_options>
+    <off_color>
+      <color red="0" green="100" blue="0" />
+    </off_color>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <square_led>false</square_led>
+    <width>20</width>
+    <x>-48</x>
+    <data_type>0</data_type>
+    <y>262</y>
+    <foreground_color>
+      <color red="192" green="192" blue="192" />
+    </foreground_color>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+    <off_label>OFF</off_label>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <rules />
+    <effect_3d>true</effect_3d>
+    <bit>-1</bit>
+    <pv_value />
+    <height>20</height>
+    <border_width>1</border_width>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:BU}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>LED</widget_type>
+    <name>LED_2</name>
+    <actions hook="false" hook_all="false" />
+    <show_boolean_label>false</show_boolean_label>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <enabled>true</enabled>
+    <wuid>-535423d8:165443c4aaf:-7fe1</wuid>
+    <on_color>
+      <color red="0" green="255" blue="0" />
+    </on_color>
+    <scripts />
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <on_label>ON</on_label>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>true</keep_wh_ratio>
+    </scale_options>
+    <off_color>
+      <color red="0" green="100" blue="0" />
+    </off_color>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <square_led>false</square_led>
+    <width>20</width>
+    <x>68</x>
+    <data_type>0</data_type>
+    <y>177</y>
+    <foreground_color>
+      <color red="192" green="192" blue="192" />
+    </foreground_color>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+    <off_label>OFF</off_label>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+    <toggle_button>false</toggle_button>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <push_action_index>0</push_action_index>
+    <rules />
+    <enabled>true</enabled>
+    <wuid>-6580569d:16544425065:-7fe8</wuid>
+    <pv_value />
+    <text>Reset Alarm BU</text>
+    <scripts />
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <height>25</height>
+    <border_width>1</border_width>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <image></image>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:BU}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>Action Button</widget_type>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <width>127</width>
+    <x>96</x>
+    <name>Action Button_1</name>
+    <y>174</y>
+    <style>0</style>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <actions hook="false" hook_all="false">
+      <action type="WRITE_PV">
+        <pv_name>$(pv_name)</pv_name>
+        <value>1</value>
+        <timeout>10</timeout>
+        <confirm_message></confirm_message>
+        <description></description>
+      </action>
+    </actions>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <rules />
+    <effect_3d>true</effect_3d>
+    <bit>-1</bit>
+    <pv_value />
+    <height>20</height>
+    <border_width>1</border_width>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:TD}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>LED</widget_type>
+    <name>LED_3</name>
+    <actions hook="false" hook_all="false" />
+    <show_boolean_label>false</show_boolean_label>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <enabled>true</enabled>
+    <wuid>-6580569d:16544425065:-7f94</wuid>
+    <on_color>
+      <color red="0" green="255" blue="0" />
+    </on_color>
+    <scripts />
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <on_label>ON</on_label>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>true</keep_wh_ratio>
+    </scale_options>
+    <off_color>
+      <color red="0" green="100" blue="0" />
+    </off_color>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <square_led>false</square_led>
+    <width>20</width>
+    <x>68</x>
+    <data_type>0</data_type>
+    <y>87</y>
+    <foreground_color>
+      <color red="192" green="192" blue="192" />
+    </foreground_color>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+    <off_label>OFF</off_label>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+    <toggle_button>false</toggle_button>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <push_action_index>0</push_action_index>
+    <rules />
+    <enabled>true</enabled>
+    <wuid>-6580569d:16544425065:-7f93</wuid>
+    <pv_value />
+    <text>Reset Alarm TD</text>
+    <scripts />
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <height>25</height>
+    <border_width>1</border_width>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <image></image>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:TD}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>Action Button</widget_type>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <width>127</width>
+    <x>96</x>
+    <name>Action Button_2</name>
+    <y>84</y>
+    <style>0</style>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <actions hook="false" hook_all="false">
+      <action type="WRITE_PV">
+        <pv_name>$(pv_name)</pv_name>
+        <value>1</value>
+        <timeout>10</timeout>
+        <confirm_message></confirm_message>
+        <description></description>
+      </action>
+    </actions>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.LED" version="1.0.0">
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <rules />
+    <effect_3d>true</effect_3d>
+    <bit>-1</bit>
+    <pv_value />
+    <height>20</height>
+    <border_width>1</border_width>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:TU}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>LED</widget_type>
+    <name>LED_4</name>
+    <actions hook="false" hook_all="false" />
+    <show_boolean_label>false</show_boolean_label>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <enabled>true</enabled>
+    <wuid>-6580569d:16544425065:-7f92</wuid>
+    <on_color>
+      <color red="0" green="255" blue="0" />
+    </on_color>
+    <scripts />
+    <border_alarm_sensitive>true</border_alarm_sensitive>
+    <on_label>ON</on_label>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>true</keep_wh_ratio>
+    </scale_options>
+    <off_color>
+      <color red="0" green="100" blue="0" />
+    </off_color>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <square_led>false</square_led>
+    <width>20</width>
+    <x>68</x>
+    <data_type>0</data_type>
+    <y>117</y>
+    <foreground_color>
+      <color red="192" green="192" blue="192" />
+    </foreground_color>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+    <off_label>OFF</off_label>
+  </widget>
+  <widget typeId="org.csstudio.opibuilder.widgets.ActionButton" version="2.0.0">
+    <toggle_button>false</toggle_button>
+    <border_style>0</border_style>
+    <forecolor_alarm_sensitive>false</forecolor_alarm_sensitive>
+    <alarm_pulsing>false</alarm_pulsing>
+    <tooltip>$(pv_name)
+$(pv_value)</tooltip>
+    <push_action_index>0</push_action_index>
+    <rules />
+    <enabled>true</enabled>
+    <wuid>-6580569d:16544425065:-7f91</wuid>
+    <pv_value />
+    <text>Reset Alarm TU</text>
+    <scripts />
+    <border_alarm_sensitive>false</border_alarm_sensitive>
+    <height>25</height>
+    <border_width>1</border_width>
+    <scale_options>
+      <width_scalable>true</width_scalable>
+      <height_scalable>true</height_scalable>
+      <keep_wh_ratio>false</keep_wh_ratio>
+    </scale_options>
+    <image></image>
+    <visible>true</visible>
+    <pv_name>$(SYS){$(DEV)-Ax:TU}Sw:AmpClr-SP</pv_name>
+    <border_color>
+      <color red="0" green="128" blue="255" />
+    </border_color>
+    <widget_type>Action Button</widget_type>
+    <backcolor_alarm_sensitive>false</backcolor_alarm_sensitive>
+    <background_color>
+      <color red="240" green="240" blue="240" />
+    </background_color>
+    <width>127</width>
+    <x>96</x>
+    <name>Action Button_3</name>
+    <y>114</y>
+    <style>0</style>
+    <foreground_color>
+      <color red="0" green="0" blue="0" />
+    </foreground_color>
+    <actions hook="false" hook_all="false">
+      <action type="WRITE_PV">
+        <pv_name>$(pv_name)</pv_name>
+        <value>1</value>
+        <timeout>10</timeout>
+        <confirm_message></confirm_message>
+        <description></description>
+      </action>
+    </actions>
+    <font>
+      <opifont.name fontName="Cantarell" height="11" style="0">Default</opifont.name>
+    </font>
+  </widget>
 </display>
