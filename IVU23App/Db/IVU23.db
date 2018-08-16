@@ -33,84 +33,109 @@ record(ao, "$(SYS){$(DEV)}P101-SP") {
 
 
 record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:PLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Positive Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M121)")
+  field(INP, "@pmac.proto getIntVar(M121) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:MLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Negative Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M122)")
+  field(INP, "@pmac.proto getIntVar(M122) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:PLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Positive Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M221)")
+  field(INP, "@pmac.proto getIntVar(M221) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:MLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Negative Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M222)")
+  field(INP, "@pmac.proto getIntVar(M222) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:PLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Positive Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M321)")
+  field(INP, "@pmac.proto getIntVar(M321) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:MLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Negative Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M322)")
+  field(INP, "@pmac.proto getIntVar(M322) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:PLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Positive Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M421)")
+  field(INP, "@pmac.proto getIntVar(M421) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:MLim-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Negative Limit Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M422)")
+  field(INP, "@pmac.proto getIntVar(M422) $(PORT)")
   field(ZNAM, "LimSw inactive")
   field(ONAM, "LimSw active")
   field(OSV, "MAJOR")
 }
+
+
+
+record(bi, "$(SYS){$(DEV)-Ax:Gap}Sw:InLim-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "In Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M115) $(PORT)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:Gap}Sw:OutLim-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Out Limit Switch")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M215) $(PORT)")
+  field(ZNAM, "LimSw inactive")
+  field(ONAM, "LimSw active")
+  field(OSV, "MAJOR")
+}
+
+
+
 
 
 
@@ -118,50 +143,50 @@ record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:MLim-Sts") {
 
 
 record(bi, "$(SYS){$(DEV)-Ax:T}Sw:OKill-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Open Kill Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M17)")
+  field(INP, "@pmac.proto getIntVar(M17) $(PORT)")
   field(ZNAM, "KillSw inactive")
   field(ONAM, "KillSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:T}Sw:CKill-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Closed Kill Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M18)")
+  field(INP, "@pmac.proto getIntVar(M18) $(PORT)")
   field(ZNAM, "KillSw inactive")
   field(ONAM, "KillSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:Gap}Sw:CKill-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Closed Kill Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M19)")
+  field(INP, "@pmac.proto getIntVar(M19) $(PORT)")
   field(ZNAM, "KillSw inactive")
   field(ONAM, "KillSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:B}Sw:CKill-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Closed Kill Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M20)")
+  field(INP, "@pmac.proto getIntVar(M20) $(PORT)")
   field(ZNAM, "KillSw inactive")
   field(ONAM, "KillSw active")
   field(OSV, "MAJOR")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:B}Sw:OKill-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Open Kill Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M21)")
+  field(INP, "@pmac.proto getIntVar(M21) $(PORT)")
   field(ZNAM, "KillSw inactive")
   field(ONAM, "KillSw active")
   field(OSV, "MAJOR")
@@ -170,38 +195,228 @@ record(bi, "$(SYS){$(DEV)-Ax:B}Sw:OKill-Sts") {
 
 
 record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:Home-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Home Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M120)")
+  field(INP, "@pmac.proto getIntVar(M120) $(PORT)")
   field(ZNAM, "HomeSw inactive")
   field(ONAM, "HomeSw active")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:Home-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Home Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M220)")
+  field(INP, "@pmac.proto getIntVar(M220) $(PORT)")
   field(ZNAM, "HomeSw inactive")
   field(ONAM, "HomeSw active")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:Home-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Home Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M320)")
+  field(INP, "@pmac.proto getIntVar(M320) $(PORT)")
   field(ZNAM, "HomeSw inactive")
   field(ONAM, "HomeSw active")
 }
 
 record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:Home-Sts") {
-  field(DTYP, "asynInt32")
+  field(DTYP, "stream")
   field(DESC, "Home Switch")
   field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(M420)")
+  field(INP, "@pmac.proto getIntVar(M420) $(PORT)")
   field(ZNAM, "HomeSw inactive")
   field(ONAM, "HomeSw active")
+}
+
+record(bi, "$(SYS){$(DEV)}Sw:EStop-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Emergency stop status")
+  field(DESC, "Open Kill Switch")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M32) $(PORT)")
+  field(ZNAM, "E-Stop inactive")
+  field(ONAM, "E-Stop active")
+  field(OSV, "MAJOR")
+}
+
+
+
+
+
+record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:AmpFlt-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Fault Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M123) $(PORT)")
+  field(ZNAM, "OK")
+  field(ONAM, "Amp Fault")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:AmpFlt-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Fault Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M223) $(PORT)")
+  field(ZNAM, "OK")
+  field(ONAM, "Amp Fault")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:AmpFlt-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Fault Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M323) $(PORT)")
+  field(ZNAM, "OK")
+  field(ONAM, "Amp Fault")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:AmpFlt-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Fault Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M423) $(PORT)")
+  field(ZNAM, "OK")
+  field(ONAM, "Amp Fault")
+  field(OSV, "MAJOR")
+}
+
+
+
+record(bi, "$(SYS){$(DEV)}Sw:OpenGapAlarm-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Open Gap Input Signal")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M16) $(PORT)")
+  field(ZNAM, "OK")
+  field(ONAM, "Emergency Open")
+  field(OSV, "MAJOR")
+}
+
+
+record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:ServoReady-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Servo Ready")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M1) $(PORT)")
+  field(ZNAM, "READY")
+  field(ONAM, "NOT READY")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:ServoReady-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Servo Ready")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M2) $(PORT)")
+  field(ZNAM, "READY")
+  field(ONAM, "NOT READY")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:ServoReady-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Servo Ready")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M3) $(PORT)")
+  field(ZNAM, "READY")
+  field(ONAM, "NOT READY")
+  field(OSV, "MAJOR")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:ServoReady-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Servo Ready")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M4) $(PORT)")
+  field(ZNAM, "READY")
+  field(ONAM, "NOT READY")
+  field(OSV, "MAJOR")
+}
+
+
+
+record(bo, "$(SYS){$(DEV)-Ax:TD}Sw:AmpClr-SP") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Clear")
+  field(ZNAM, "0")
+  field(ONAM, "1")
+  field(HIGH, "0.5")
+  field(SCAN, "Passive")
+  field(OUT, "@pmac.proto setIntVar(M33) $(PORT)")
+}
+
+record(bo, "$(SYS){$(DEV)-Ax:TU}Sw:AmpClr-SP") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Clear")
+  field(ZNAM, "0")
+  field(ONAM, "1")
+  field(HIGH, "0.5")
+  field(SCAN, "Passive")
+  field(OUT, "@pmac.proto setIntVar(M34) $(PORT)")
+}
+
+record(bo, "$(SYS){$(DEV)-Ax:BD}Sw:AmpClr-SP") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Clear")
+  field(ZNAM, "0")
+  field(ONAM, "1")
+  field(HIGH, "0.5")
+  field(SCAN, "Passive")
+  field(OUT, "@pmac.proto setIntVar(M35) $(PORT)")
+}
+
+record(bo, "$(SYS){$(DEV)-Ax:BU}Sw:AmpClr-SP") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Clear")
+  field(ZNAM, "0")
+  field(ONAM, "1")
+  field(HIGH, "0.5")
+  field(SCAN, "Passive")
+  field(OUT, "@pmac.proto setIntVar(M36) $(PORT)")
+}
+
+
+
+
+
+record(bi, "$(SYS){$(DEV)-Ax:TD}Sw:AmpEna-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Enable Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M114) $(PORT)")
+  field(ZNAM, "Amp Disabled")
+  field(ONAM, "Amp Enabled")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:TU}Sw:AmpEna-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Enable Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M214) $(PORT)")
+  field(ZNAM, "Amp Disabled")
+  field(ONAM, "Amp Enabled")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BD}Sw:AmpEna-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Enable Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M314) $(PORT)")
+  field(ZNAM, "Amp Disabled")
+  field(ONAM, "Amp Enabled")
+}
+
+record(bi, "$(SYS){$(DEV)-Ax:BU}Sw:AmpEna-Sts") {
+  field(DTYP, "stream")
+  field(DESC, "Amp Enable Status")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getIntVar(M414) $(PORT)")
+  field(ZNAM, "Amp Disabled")
+  field(ONAM, "Amp Enabled")
 }
 

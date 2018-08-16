@@ -47,3 +47,4 @@ makeAutosaveFileFromDbInfo("../../as/req/ioc_waveforms.req", "autosaveFields_pas
 create_monitor_set("ioc_settings.req", 5, "")
 create_monitor_set("ioc_waveforms.req", 60, "")
 
+dbl > records.dbl
