@@ -19,15 +19,15 @@ record(ao, "$(SYS){$(DEV)}P100-SP") {
   field(OUT, "@pmac.proto setVar(P100) $(PORT)")
 }
 
-record(ai, "$(SYS){$(DEV)}P101") {
-  field(DTYP, "asynFloat64")
-  field(SCAN, "1 second")
-  field(INP, "@asyn($(PORT))var(P101)")
-}
-record(ao, "$(SYS){$(DEV)}P101-SP") {
-  field(DTYP, "asynFloat64")
-  field(OUT, "@asyn($(PORT))var(P101)")
-}
+#record(ai, "$(SYS){$(DEV)}P101") {
+#  field(DTYP, "asynFloat64")
+#  field(SCAN, "1 second")
+#  field(INP, "@asyn($(PORT))var(P101)")
+#}
+#record(ao, "$(SYS){$(DEV)}P101-SP") {
+#  field(DTYP, "asynFloat64")
+#  field(OUT, "@asyn($(PORT))var(P101)")
+#}
 
 
 

@@ -14,6 +14,7 @@
 #define LINENC_OFFSET_DSL 71941200
 
 #include "PLC01_Startup.pmc"
+#include "PLC05_cpu.pmc"
 
 #include "MVariables.pmc"
 #include "IVariables.pmc"
